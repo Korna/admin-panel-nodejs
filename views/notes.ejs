@@ -1,0 +1,39 @@
+<% include partials/head %>
+
+<body>
+<div class="col-sm-8 col-sm-offset-2">
+  <div class="jumbotron text-center">
+    <h1> Create note</h1>
+
+      <% if (message != null) { %>
+    <div class="alert-danger"><%= message %></div>
+      <% } %>
+
+    <form action="/notes" method="post">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" class="form-control" name="title">
+      </div>
+      <div class="form-group">
+        <label>Body</label>
+        <input type="text" class="form-control" name="body" />
+      </div>
+      <div class="form-group">
+        <label>image</label>
+        <input type="text" class="form-control" name="image" />
+      </div>
+      <div>
+        <input type="submit" class="form-control" value="Submit" />
+      </div>
+    </form>
+
+    <form method="post" enctype="multipart/form-data" action="/upload">
+      <input type="file" name="recfile">
+      <input type="submit" value="Load file">
+    </form>
+  </div>
+  <hr>
+  <p>Or go <a href="/">home</a>.</p>
+</div>
+</body>
+</html>

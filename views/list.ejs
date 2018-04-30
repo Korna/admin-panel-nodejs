@@ -1,0 +1,103 @@
+<% include partials/head %>
+
+<body onload="loadAllNotes()">
+<script>
+    function loadAllNotes(){
+        var url = 'http://localhost:3000/notes/all';
+        fetch(url).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            console.log(data);
+
+            data.forEach(function(entry) {
+                add(entry.title, entry._id, entry.image);
+            });
+
+        }).catch(function() {
+            console.log('error');
+        });
+    }
+
+    function add(title, id, image){
+        var list = document.getElementById('note_list');
+        var entry = document.createElement('li');
+
+        var img = document.createElement("img");
+
+        img.src = './upload/' + image;
+        entry.appendChild(img);
+
+        entry.appendChild(document.createTextNode('title:' + title// + ' id:' + id
+        ));
+        entry.setAttribute('id', id); // added line
+        entry.setAttribute('image', image); // added line
+
+        var btn = document.createElement("button");
+        var t = document.createTextNode("Delete");
+
+        btn.onclick = function(evt) {
+            evt.preventDefault();
+            del(entry.getAttribute('id'));
+        }
+
+        btn.appendChild(t);
+
+        entry.appendChild(btn);
+        list.appendChild(entry);
+    }
+
+/*
+    function addToDb(title, body){
+        var url = 'http://localhost:3000/notes/';
+
+        var data = {};
+        data.title = title;
+        data.body  = body;
+        var json = JSON.stringify(data);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+        xhr.onload = function () {
+            var users = JSON.parse(xhr.responseText);
+            if (xhr.readyState == 4 && xhr.status == "201") {
+                console.table(users);
+            } else {
+                console.error(users);
+            }
+        }
+        xhr.send(json);
+    }*/
+
+    function del(count){
+        var url = 'http://localhost:3000/notes/' + count;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("DELETE", url, true);
+        xhr.onload = function () {
+
+        }
+        xhr.send(null);
+    }
+</script>
+
+<div class="col-sm-8 col-sm-offset-2">
+  <div class="jumbotron text-center">
+
+      <% if (message != null) { %>
+    <div class="alert-danger"><%= message %></div>
+      <% } %>
+
+    <body>
+
+
+    <ol id="note_list"></ol>
+
+    </body>
+
+  </div>
+  <hr>
+  <p>Or go <a href="/">home</a>.</p>
+</div>
+</body>
+</html>
