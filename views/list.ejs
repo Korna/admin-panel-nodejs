@@ -2,9 +2,15 @@
 
 <body onload="loadAllNotes()">
 <script>
+
+    function getUrl(){
+        var url = window.location.href
+        var arr = url.split("/");
+        var result = arr[0] + "//" + arr[2]
+        return result;
+    }
     function loadAllNotes(){
-        var currentLocation = window.location;
-        var url = currentLocation + '/notes/all';
+        var url = getUrl() + '/notes/all';
         fetch(url).then(function(response) {
             return response.json();
         }).then(function(data) {
@@ -56,9 +62,7 @@
     }
 
     function del(count){
-        var currentLocation = window.location;
-
-        var url = currentLocation + '/notes/' + count;
+        var url = getUrl()  + '/notes/' + count;
 
         var xhr = new XMLHttpRequest();
         xhr.open("DELETE", url, true);
