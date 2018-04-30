@@ -3,7 +3,8 @@
 <body onload="loadAllNotes()">
 <script>
     function loadAllNotes(){
-        var url = 'http://localhost:3000/notes/all';
+        var currentLocation = window.location;
+        var url = currentLocation + '/notes/all';
         fetch(url).then(function(response) {
             return response.json();
         }).then(function(data) {
@@ -54,31 +55,10 @@
         list.appendChild(entry);
     }
 
-/*
-    function addToDb(title, body){
-        var url = 'http://localhost:3000/notes/';
-
-        var data = {};
-        data.title = title;
-        data.body  = body;
-        var json = JSON.stringify(data);
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-        xhr.onload = function () {
-            var users = JSON.parse(xhr.responseText);
-            if (xhr.readyState == 4 && xhr.status == "201") {
-                console.table(users);
-            } else {
-                console.error(users);
-            }
-        }
-        xhr.send(json);
-    }*/
-
     function del(count){
-        var url = 'http://localhost:3000/notes/' + count;
+        var currentLocation = window.location;
+
+        var url = currentLocation + '/notes/' + count;
 
         var xhr = new XMLHttpRequest();
         xhr.open("DELETE", url, true);
