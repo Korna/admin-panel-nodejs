@@ -9,6 +9,8 @@
         }).then(function(data) {
             console.log(data);
 
+            clearList();
+
             data.forEach(function(entry) {
                 add(entry.title, entry._id, entry.image);
             });
@@ -18,6 +20,12 @@
         });
     }
 
+    function clearList() {
+        var list = document.getElementById('note_list');
+        while( list.firstChild ){
+            list.removeChild( root.firstChild );
+        }
+    }
     function add(title, id, image){
         var list = document.getElementById('note_list');
         var entry = document.createElement('li');
@@ -80,7 +88,6 @@
         xhr.send(null);
     }
 </script>
-
 <div class="col-sm-8 col-sm-offset-2">
   <div class="jumbotron text-center">
 
@@ -88,14 +95,15 @@
     <div class="alert-danger"><%= message %></div>
       <% } %>
 
+    <input type="submit" value="Reload" onclick="loadAllNotes()">
+
     <body>
-
-
     <ol id="note_list"></ol>
-
     </body>
 
+
   </div>
+
   <hr>
   <p>Or go <a href="/">home</a>.</p>
 </div>
