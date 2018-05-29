@@ -76,7 +76,7 @@ module.exports = function(app, db) {
         });
     });
 
-    app.get('/notes/all/', ctr.isLoggedIn, function(req, res) {
+    app.get('/notes/all/', function(req, res) {
         const query = {};
         const from = 0;
         const to = 15;
@@ -122,11 +122,7 @@ function requireAdmin(req, res, next) {
     User.findOne({ 'email':  req.user.email }, function(err, user) {
         if (err)
             return next(err);
-
-        if(!user){
-          //  res.status(404);
-            res.send({ 'error': 'You are not authenticated' });
-        }else
+        
         if(!user.admin){
           //  res.status(403);
             res.send({ 'error': 'You are not Admin' });
