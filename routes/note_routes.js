@@ -6,7 +6,7 @@ const serviceAccount = require('../config/serviceKey.json');
 
 let isLoggedIn = require('../control/middleware').isLoggedIn;
 
-let Note = require('../models/note');
+import Note from'../models/note';
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -39,8 +39,8 @@ module.exports = function(app, db) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
 
-        const note = { text: req.body.body, title: req.body.title };
-      //  const note = new Note(req.body.body, req.body.title);
+      //  const note = { text: req.body.body, title: req.body.title };
+        const note = new Note(req.body.body, req.body.title);
 
         db.collection('notes').update(details, note, (err, result) => {
             if (err) {
@@ -58,7 +58,7 @@ module.exports = function(app, db) {
             if (err) {
                 res.send({'error':'An error has occurred'});
             } else {
-                res.send('Note ' + id + ' deleted!');
+                res.send('note ' + id + ' deleted!');
             }
         });
     });
