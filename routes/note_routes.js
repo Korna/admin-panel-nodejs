@@ -79,7 +79,7 @@ module.exports = function(app, db) {
         const projection = {_id:1, text: "", title: "", image: ""};
 
         console.log('req.id' + req.params.id);
-        //const
+
         /*
         db.collection(TABLE_NOTES).find(details, projection, (err, item) => {
             if (err) {

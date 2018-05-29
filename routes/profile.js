@@ -1,12 +1,16 @@
 const ObjectID = require('mongodb').ObjectID;
 let ctr = require('../control/middleware.js');
+let User = require('../models/user');
 const TABLE_PROFILES = 'profiles';
 module.exports = function(app, db) {
 
-    app.get('/notes/get/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
-        const id = req.params.id;
+    app.get('/profile/get', //ctr.isLoggedIn, ctr.requireAdmin,
+        function(req, res) {
+        let email = req.user.email;
 
-        const details = { 'email': new ObjectID(id) };
+
+
+        const details = { 'email': email };
         const projection = {_id:1, text: "", title: "", image: ""};
         //const
         /*
