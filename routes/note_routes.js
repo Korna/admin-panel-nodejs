@@ -6,7 +6,7 @@ const serviceAccount = require('../config/serviceKey.json');
 
 let isLoggedIn = require('../control/middleware').isLoggedIn;
 
-import Note from'../models/note';
+var Note = require('../models/note.js');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -58,7 +58,7 @@ module.exports = function(app, db) {
             if (err) {
                 res.send({'error':'An error has occurred'});
             } else {
-                res.send('note ' + id + ' deleted!');
+                res.send('Note ' + id + ' deleted!');
             }
         });
     });

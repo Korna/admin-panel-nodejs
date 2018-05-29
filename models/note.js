@@ -1,4 +1,4 @@
-class Note{
+module.exports = class Note{
 
     constructor(text, title) {
         this.text = text;
@@ -11,4 +11,5 @@ class Note{
         this.image = image;
     }
 
-}
+};
+
