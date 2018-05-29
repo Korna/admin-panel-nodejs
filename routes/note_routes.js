@@ -6,6 +6,8 @@ const serviceAccount = require('../config/serviceKey.json');
 
 let isLoggedIn = require('../control/middleware').isLoggedIn;
 
+let Note = require('../models/note');
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://proteus0project.firebaseio.com"
@@ -37,8 +39,8 @@ module.exports = function(app, db) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
 
-       // const note = { text: req.body.body, title: req.body.title };
-        const note = new Note(req.body.body, req.body.title);
+        const note = { text: req.body.body, title: req.body.title };
+      //  const note = new Note(req.body.body, req.body.title);
 
         db.collection('notes').update(details, note, (err, result) => {
             if (err) {
@@ -87,7 +89,8 @@ module.exports = function(app, db) {
             }
         });
     });
-    
+
+
     app.post('/notes/', isLoggedIn, requireAdmin, function(req, res) {
         console.log(req.body);
 
