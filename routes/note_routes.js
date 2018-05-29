@@ -4,6 +4,8 @@ const admin = require('firebase-admin');
 
 const serviceAccount = require('../config/serviceKey.json');
 
+let isLoggedIn = require('../control/middleware').isLoggedIn;
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://proteus0project.firebaseio.com"
@@ -107,7 +109,7 @@ module.exports = function(app, db) {
         });
     });
 };
-
+/*
 function isLoggedIn(req, res, next) {
     console.log('Authenticated:' + req.isAuthenticated());
    // console.log('User:' + req.user.body);
@@ -118,7 +120,7 @@ function isLoggedIn(req, res, next) {
         res.status(403);
         res.send({ 'error': 'You are not authenticated' });
     }
-}
+}*/
 
 var User = require('../models/user');
 function requireAdmin(req, res, next) {

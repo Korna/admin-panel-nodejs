@@ -2,6 +2,9 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
+
+let isLoggedIn = require('../control/middleware').isLoggedIn;
+
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
@@ -44,9 +47,9 @@ router.post('/login', passport.authenticate('local-login', {
 }));
 
 module.exports = router;
-
+/*
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated())
       return next();
   res.redirect('/');
-}
+}*/

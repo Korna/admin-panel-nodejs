@@ -1,4 +1,6 @@
 
+let isLoggedIn = require('../control/middleware').isLoggedIn;
+
 
 module.exports = function(app, fs, type, path) {
     app.get("/upload/:name", isLoggedIn, function(req, res) {
@@ -23,7 +25,7 @@ module.exports = function(app, fs, type, path) {
     });
 
 };
-
+/*
 function isLoggedIn(req, res, next) {
     console.log('Authenticated:' + req.isAuthenticated());
 
@@ -33,7 +35,7 @@ function isLoggedIn(req, res, next) {
         res.status(403);
         res.send({ 'error': 'You are not authenticated' });
     }
-}
+}*/
 
 const User = require('../models/user');
 
