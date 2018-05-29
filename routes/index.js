@@ -13,11 +13,11 @@ router.get('/login', function(req, res, next) {
   res.render('login.ejs', { message: req.flash('loginMessage') });
 });
 
-router.get('/list', function(req, res, next) {
+router.get('/list', ctr.isLoggedIn, function(req, res, next) {
     res.render('list.ejs', { message: req.flash('loginMessage') });
 });
 
-router.get('/notes', function(req, res, next) {
+router.get('/notes', ctr.isLoggedIn, function(req, res, next) {
     res.render('notes.ejs', { message: req.flash('loginMessage') });
 });
 
