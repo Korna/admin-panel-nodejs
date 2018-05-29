@@ -78,9 +78,11 @@ let users = require('./routes/users');
 let routes = require('./routes/index');
 upload = require('./routes/upload')(app, fs, type, path);
 let notes = require('./routes/note_routes')(app, db);
+let profile = require('./routes/profile')(app, db);
 
 app.use('/', routes);
 app.use('/users', users);
+//app.use('/', profile);
 //app.use('/note_routes', notes)(app, db);
 
 

@@ -4,9 +4,10 @@ let User = require('../models/user');
 const TABLE_PROFILES = 'profiles';
 module.exports = function(app, db) {
 
-    app.get('/profile/get', //ctr.isLoggedIn, ctr.requireAdmin,
+    app.get('/profile/get/', //ctr.isLoggedIn, ctr.requireAdmin,
         function(req, res) {
         let email = req.user.email;
+       // const req = req.params.email; // :email
 
 
 
