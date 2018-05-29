@@ -36,7 +36,10 @@ module.exports = function(app, db) {
     app.put ('/notes/:id', isLoggedIn, requireAdmin, function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
-        const note = { text: req.body.body, title: req.body.title };
+
+       // const note = { text: req.body.body, title: req.body.title };
+        const note = new Note(req.body.body, req.body.title);
+
         db.collection('notes').update(details, note, (err, result) => {
             if (err) {
                 res.send({'error':'An error has occurred'});
@@ -71,7 +74,7 @@ module.exports = function(app, db) {
         });
     });
 
-    app.get('/notes/all/', function(req, res) {
+    app.get('/notes/all/', isLoggedIn, function(req, res) {
         const query = {};
         const from = 0;
         const to = 15;
@@ -92,11 +95,12 @@ module.exports = function(app, db) {
         const req_title = req.body.title;
         const req_image = req.body.image;
 
-        const note = {
+       /* const note = {
             body: req_body,
             title: req_title,
             image: req_image
-        };
+        };*/
+        const note = new Note(req_body, req_title, req_image);
 
         db.collection('notes').insert(note, (err, result) => {
             if (err) {
@@ -109,18 +113,6 @@ module.exports = function(app, db) {
         });
     });
 };
-/*
-function isLoggedIn(req, res, next) {
-    console.log('Authenticated:' + req.isAuthenticated());
-   // console.log('User:' + req.user.body);
-
-    if (req.isAuthenticated())
-        return next();
-    else{
-        res.status(403);
-        res.send({ 'error': 'You are not authenticated' });
-    }
-}*/
 
 var User = require('../models/user');
 function requireAdmin(req, res, next) {
@@ -137,6 +129,5 @@ function requireAdmin(req, res, next) {
             res.send({ 'error': 'You are not Admin' });
         }else
             next();
-
     });
 }

@@ -25,17 +25,7 @@ module.exports = function(app, fs, type, path) {
     });
 
 };
-/*
-function isLoggedIn(req, res, next) {
-    console.log('Authenticated:' + req.isAuthenticated());
 
-    if (req.isAuthenticated())
-        return next();
-    else{
-        res.status(403);
-        res.send({ 'error': 'You are not authenticated' });
-    }
-}*/
 
 const User = require('../models/user');
 
