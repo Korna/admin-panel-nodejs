@@ -1,4 +1,4 @@
-class Dialog{
+module.exports = class Dialog{
 
     constructor(id, userName, userId){
         this.id = id;

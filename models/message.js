@@ -1,4 +1,4 @@
-class Message{
+module.exports = class Message{
 
     constructor(id, text, time) {
         this.id = id;

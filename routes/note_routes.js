@@ -8,6 +8,12 @@ let ctr = require('../control/middleware.js');
 
 let Note = require('../models/note.js');
 
+
+const TABLE_NOTES = 'notes';
+const TABLE_DIALOGS = 'dialogs';
+const TABLE_MESSAGES = 'messages';
+const TABLE_PROFILES = 'profiles';
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://proteus0project.firebaseio.com"
@@ -35,14 +41,14 @@ function sendToTopics(title, body){
 
 
 module.exports = function(app, db) {
-    app.put ('/notes/:id', ctr.isLoggedIn, requireAdmin, function(req, res) {
+    app.put ('/notes/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
 
       //  const note = { text: req.body.body, title: req.body.title };
         const note = new Note(req.body.body, req.body.title);
 
-        db.collection('notes').update(details, note, (err, result) => {
+        db.collection(TABLE_NOTES).update(details, note, (err, result) => {
             if (err) {
                 res.send({'error':'An error has occurred'});
             } else {
@@ -51,10 +57,10 @@ module.exports = function(app, db) {
         });
     });
 
-    app.delete('/notes/:id', ctr.isLoggedIn, requireAdmin, function(req, res) {
+    app.delete('/notes/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
-        db.collection('notes').remove(details, (err, item) => {
+        db.collection(TABLE_NOTES).remove(details, (err, item) => {
             if (err) {
                 res.send({'error':'An error has occurred'});
             } else {
@@ -64,10 +70,21 @@ module.exports = function(app, db) {
     });
 
 
-    app.get('/notes/get/:id', ctr.isLoggedIn, requireAdmin, function(req, res) {
+    app.get('/notes/get/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
-        db.collection('notes').findOne(details, (err, item) => {
+        const projection = {_id:1, text: "", title: "", image: ""};
+        //const
+        /*
+        db.collection(TABLE_NOTES).find(details, projection, (err, item) => {
+            if (err) {
+                res.send({'error':'An error has occurred'});
+            } else {
+                res.send(item);
+            }
+        });*/
+
+        db.collection(TABLE_NOTES).findOne(details, (err, item) => {
             if (err) {
                 res.send({'error':'An error has occurred'});
             } else {
@@ -81,7 +98,7 @@ module.exports = function(app, db) {
         const from = 0;
         const to = 15;
 
-        db.collection('notes').find(query).skip(from).limit(to).toArray((err, item) => {
+        db.collection(TABLE_NOTES).find(query).skip(from).limit(to).toArray((err, item) => {
             if (err) {
                 res.send({'error':'An error has occurred'});
             } else {
@@ -91,7 +108,7 @@ module.exports = function(app, db) {
     });
 
 
-    app.post('/notes/', ctr.isLoggedIn, requireAdmin, function(req, res) {
+    app.post('/notes/', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
         console.log(req.body);
 
         const req_body = req.body.body;
@@ -105,7 +122,7 @@ module.exports = function(app, db) {
         };*/
         const note = new Note(req_body, req_title, req_image);
 
-        db.collection('notes').insert(note, (err, result) => {
+        db.collection(TABLE_NOTES).insert(note, (err, result) => {
             if (err) {
                 res.send({ 'error': 'An error has occurred' });
             } else {
@@ -129,17 +146,3 @@ function isLoggedIn(req, res, next) {
     }
 }*/
 
-var User = require('../models/user');
-function requireAdmin(req, res, next) {
-    User.findOne({ 'email':  req.user.email }, function(err, user) {
-        if (err)
-            return next(err);
-
-
-        if(!user.admin){
-            res.status(403);
-            res.send({ 'error': 'You are not Admin' });
-        }else
-            next();
-    });
-}

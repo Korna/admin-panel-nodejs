@@ -8,7 +8,7 @@ module.exports = function(app, fs, type, path) {
         res.sendFile(path.resolve('./upload/' + name));
     });
 
-    app.post('/upload', type, ctr.isLoggedIn, requireAdmin, function (req,res) {
+    app.post('/upload', type, ctr.isLoggedIn, ctr.requireAdmin, function (req,res) {
         const tmp_path = req.file.path;
         const target_path = 'upload/' + req.file.originalname;
 
@@ -26,7 +26,7 @@ module.exports = function(app, fs, type, path) {
 
 };
 
-
+/*
 const User = require('../models/user');
 
 function requireAdmin(req, res, next) {
@@ -45,4 +45,4 @@ function requireAdmin(req, res, next) {
             next();
 
     });
-}
+}*/

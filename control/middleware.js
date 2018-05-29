@@ -1,3 +1,5 @@
+var User = require('../models/user');
+
 module.exports = {
 
     isLoggedIn: function(req, res, next) {
@@ -10,8 +12,21 @@ module.exports = {
             res.status(403);
             res.send({ 'error': 'You are not authenticated' });
         }
+    },
+
+    requireAdmin: function(req, res, next) {
+        User.findOne({ 'email':  req.user.email }, function(err, user) {
+            if (err)
+                return next(err);
+
+
+            if(!user.admin){
+                res.status(403);
+                res.send({ 'error': 'You are not Admin' });
+            }else
+                next();
+        });
     }
 
+
 };
-
-
