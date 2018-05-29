@@ -1,14 +1,14 @@
 
-let isLoggedIn = require('../control/middleware').isLoggedIn;
+let ctr = require('../control/middleware.js');
 
 
 module.exports = function(app, fs, type, path) {
-    app.get("/upload/:name", isLoggedIn, function(req, res) {
+    app.get("/upload/:name", ctr.isLoggedIn, function(req, res) {
         const name = req.params.name;
         res.sendFile(path.resolve('./upload/' + name));
     });
 
-    app.post('/upload', type, isLoggedIn, requireAdmin, function (req,res) {
+    app.post('/upload', type, ctr.isLoggedIn, requireAdmin, function (req,res) {
         const tmp_path = req.file.path;
         const target_path = 'upload/' + req.file.originalname;
 

@@ -4,9 +4,9 @@ const admin = require('firebase-admin');
 
 const serviceAccount = require('../config/serviceKey.json');
 
-let isLoggedIn = require('../control/middleware').isLoggedIn;
+let ctr = require('../control/middleware.js');
 
-var Note = require('../models/note.js');
+let Note = require('../models/note.js');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -35,7 +35,7 @@ function sendToTopics(title, body){
 
 
 module.exports = function(app, db) {
-    app.put ('/notes/:id', isLoggedIn, requireAdmin, function(req, res) {
+    app.put ('/notes/:id', ctr.isLoggedIn, requireAdmin, function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
 
@@ -51,7 +51,7 @@ module.exports = function(app, db) {
         });
     });
 
-    app.delete('/notes/:id', isLoggedIn, requireAdmin, function(req, res) {
+    app.delete('/notes/:id', ctr.isLoggedIn, requireAdmin, function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
         db.collection('notes').remove(details, (err, item) => {
@@ -64,7 +64,7 @@ module.exports = function(app, db) {
     });
 
 
-    app.get('/notes/get/:id', isLoggedIn, requireAdmin, function(req, res) {
+    app.get('/notes/get/:id', ctr.isLoggedIn, requireAdmin, function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
         db.collection('notes').findOne(details, (err, item) => {
@@ -76,7 +76,7 @@ module.exports = function(app, db) {
         });
     });
 
-    app.get('/notes/all/', isLoggedIn, function(req, res) {
+    app.get('/notes/all/', ctr.isLoggedIn, function(req, res) {
         const query = {};
         const from = 0;
         const to = 15;
@@ -91,7 +91,7 @@ module.exports = function(app, db) {
     });
 
 
-    app.post('/notes/', isLoggedIn, requireAdmin, function(req, res) {
+    app.post('/notes/', ctr.isLoggedIn, requireAdmin, function(req, res) {
         console.log(req.body);
 
         const req_body = req.body.body;

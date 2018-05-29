@@ -3,7 +3,7 @@ const passport = require('passport');
 const router = express.Router();
 
 
-let isLoggedIn = require('../control/middleware').isLoggedIn;
+let ctr = require('../control/middleware.js');
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -25,7 +25,7 @@ router.get('/signup', function(req, res) {
   res.render('signup.ejs', { message: req.flash('loginMessage') });
 });
 
-router.get('/profile', isLoggedIn, function(req, res) {
+router.get('/profile', ctr.isLoggedIn, function(req, res) {
   res.render('profile.ejs', { user: req.user });
 });
 
