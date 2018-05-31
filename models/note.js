@@ -1,9 +1,11 @@
 module.exports = class Note{
 
-    constructor(text, title, image) {
+    constructor(authorId, text, title, category) {
+        this.authorId = authorId;
         this.text = text;
         this.title = title;
-        this.image = image;
+        this.category = category;
+
     }
 
 };
