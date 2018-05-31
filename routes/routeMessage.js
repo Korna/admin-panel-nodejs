@@ -7,7 +7,7 @@ const TABLE_MESSAGES = 'messages';
 
 module.exports = function(app, db) {
 
-    app.get('/chat/messages/:idDialog', //get messages from dialog
+    app.get('/api/chat/messages/:idDialog', //get messages from dialog
         function(req, res) {
             let email = req.user.email;
 
@@ -32,7 +32,7 @@ module.exports = function(app, db) {
             });
         });
 
-    app.post('/chat/message/',
+    app.post('/api/chat/message/',
         function(req, res) {
             console.log(req.body);
 

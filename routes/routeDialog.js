@@ -5,7 +5,7 @@ let Message = require('../models/message.js');
 
 const TABLE_DIALOGS = 'dialogs';
 module.exports = function(app, db) {
-    app.get('/chat/dialogs/', //get messages from dialog
+    app.get('/api/dialogs/', //get messages from dialog
         function(req, res) {
             let id = req.user.id;
 
@@ -27,7 +27,7 @@ module.exports = function(app, db) {
             });
         });
 
-    app.post('/chat/dialogs/',
+    app.post('/api/dialogs/',
         function(req, res) {
             let id = req.user.id;
             console.log(req.body);

@@ -76,8 +76,11 @@ require('./config/passport')(passport);
 
 let users = require('./routes/users');
 let routes = require('./routes/index');
+
 upload = require('./routes/upload')(app, fs, type, path);
 
+
+let sign = require('./routes/routeSign')(app, db);
 let notes = require('./routes/routeNote')(app, db);
 let profile = require('./routes/routeProfile')(app, db);
 

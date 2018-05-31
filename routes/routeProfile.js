@@ -6,7 +6,7 @@ let Profile = require('../models/profile.js');
 const TABLE_PROFILES = 'profiles';
 module.exports = function(app, db) {
 
-    app.get('/profile/get/', //ctr.isLoggedIn, ctr.requireAdmin,
+    app.get('/api/profile/get/', //ctr.isLoggedIn, ctr.requireAdmin,
         function(req, res) {
             let userId = req.user.id;
             // const req = req.params.email; // :email
@@ -34,7 +34,7 @@ module.exports = function(app, db) {
             });
         });
 
-    app.post('/profile/updateFcm/', //ctr.isLoggedIn, ctr.requireAdmin, TODO change whole route
+    app.post('/api/profile/updateFcm/', //ctr.isLoggedIn, ctr.requireAdmin, TODO change whole route
         function(req, res) {
             // const req = req.params.email; // :email
             let userId = req.user.id;
@@ -71,7 +71,7 @@ module.exports = function(app, db) {
             });
         });
 
-    app.post('/profile/', //ctr.isLoggedIn, ctr.requireAdmin,
+    app.post('/api/profile/', //ctr.isLoggedIn, ctr.requireAdmin,
         function(req, res) {
         let userId = req.user.id;
         const details = { 'userId': userId };
