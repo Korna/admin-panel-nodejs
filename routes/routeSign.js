@@ -9,7 +9,7 @@ module.exports = function(app, db) {
 
 
     app.post('/api/signin', function (req, res, next) {
-        passport.authenticate('local', function (err, user, info) {
+        passport.authenticate('local-login', function (err, user, info) {
             if (err) {
                 return next(err);
             }
