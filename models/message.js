@@ -1,10 +1,10 @@
 module.exports = class Message{
 
-    constructor(id, text, time) {
-        this.id = id;
+    constructor(idDialog, text, timeSent) {
+        this.idDialog = idDialog;
         this.text = text;
-        this.time = time;
+        this.timeSent = timeSent;
     }
 
 
-}
+};

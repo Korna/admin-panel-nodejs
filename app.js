@@ -1,4 +1,4 @@
-var express = require('express');
+const express = require('express');
 var app = express();
 //var router = express.Router();
 const path = require('path');
@@ -77,8 +77,9 @@ require('./config/passport')(passport);
 let users = require('./routes/users');
 let routes = require('./routes/index');
 upload = require('./routes/upload')(app, fs, type, path);
-let notes = require('./routes/note_routes')(app, db);
-let profile = require('./routes/profile')(app, db);
+
+let notes = require('./routes/routeNote')(app, db);
+let profile = require('./routes/routeProfile')(app, db);
 
 app.use('/', routes);
 app.use('/users', users);

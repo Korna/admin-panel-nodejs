@@ -1,46 +1,13 @@
 const ObjectID = require('mongodb').ObjectID;
-
-const admin = require('firebase-admin');
-
-const serviceAccount = require('../config/serviceKey.json');
-
 let ctr = require('../control/middleware.js');
 
 let Note = require('../models/note.js');
 
 
 const TABLE_NOTES = 'notes';
-const TABLE_DIALOGS = 'dialogs';
-const TABLE_MESSAGES = 'messages';
-
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://proteus0project.firebaseio.com"
-});
-
-const device = 'dYYbIvxrn_E:APA91bG5NJSlt5YboaeuSXM7Hqmhh0kBkaDNjp-go1CakqqlTVzSo_mGRL3p5KoRzFQy3sbv4VK6M6_iEejH4hvrmUWJ7mzp4KfxW5IqAf36WHAYjqIi9cP4FaZpskV4t4JwngaOaAbb';
-
-function sendToTopics(title, body){
-    const payload = {
-        notification: {
-            title: title,
-            body: body
-        },
-    };
-
-    admin.messaging().sendToDevice(device, payload)
-        .then((response) => {
-            console.log('Successfully sent message:', response);
-        })
-        .catch((error) => {
-            console.log('Error sending message:', error);
-        });
-
-}
-
 
 module.exports = function(app, db) {
+
     app.put ('/notes/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
@@ -105,7 +72,8 @@ module.exports = function(app, db) {
         const from = 0;
         const to = 15;
 
-        db.collection(TABLE_NOTES).find(query).skip(from).limit(to).toArray((err, item) => {
+        db.collection(TABLE_NOTES).find(query)
+            .skip(from).limit(to).toArray((err, item) => {
             if (err) {
                 res.send({'error':'An error has occurred'});
             } else {
@@ -131,7 +99,7 @@ module.exports = function(app, db) {
             } else {
                 res.send(result.ops[0]);
 
-                sendToTopics(req_title, req_body);
+               // sendToTopics(req_title, req_body);
             }
         });
     });
