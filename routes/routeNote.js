@@ -32,7 +32,7 @@ module.exports = function(app, db) {
         const details = { '_id': new ObjectID(id) };
         const projection = {_id:1, text: "", title: "", image: ""};
 
-        console.log('req.id' + req.params.id);
+
 
         /*
         db.collection(TABLE_NOTES).find(details, projection, (err, item) => {
@@ -80,7 +80,12 @@ module.exports = function(app, db) {
         const req_cat = req.body.category;
         const req_image = req.body.image;
 
-        const note = new Note(userId, req_title, req_body, req_cat, req_image);
+        const req_lat = req.body.latitude;
+        const req_lon = req.body.longitude;
+
+        const note = new Note(userId, req_title, req_body, req_cat,
+            req_image,
+            req_lat, req_lon);
 
         db.collection(TABLE_NOTES).insert(note, (err, result) => {
             if (err) {

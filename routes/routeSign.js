@@ -1,7 +1,5 @@
 
 const passport = require('passport');
-
-
 module.exports = function(app, db) {
     app.post('/api/signup', passport.authenticate('local-signup', { session: true }), function (req, res, next) {
         res.status(200).end();
@@ -11,7 +9,6 @@ module.exports = function(app, db) {
             res.status(200).end();
         }
     );
-
 };
 
 /*
