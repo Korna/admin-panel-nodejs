@@ -10,21 +10,6 @@ const TABLE_NOTES = 'notes';
 
 module.exports = function(app, db) {
 
-    app.put ('/api/notes/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
-        const id = req.params.id;
-        const details = { '_id': new ObjectID(id) };
-
-
-        const note = new Note(req.body.body, req.body.title);
-
-        db.collection(TABLE_NOTES).update(details, note, (err, result) => {
-            if (err) {
-                res.send({'error':'An error has occurred'});
-            } else {
-                res.send(note);
-            }
-        });
-    });
 
     app.delete('/api/notes/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
         const id = req.params.id;
@@ -72,7 +57,7 @@ module.exports = function(app, db) {
         console.log('req.id' + req.params.id);
         const query = {};
         const from = 0;
-        const to = 15;
+        const to = 30;
 
         db.collection(TABLE_NOTES).find(query)
             .skip(from).limit(to).toArray((err, item) => {
@@ -90,12 +75,12 @@ module.exports = function(app, db) {
         console.log(req.body);
         let userId = req.user.id;
 
-        const req_body = req.body.name;
-        const req_title = req.body.description;
+        const req_title = req.body.name;
+        const req_body = req.body.description;
         const req_cat = req.body.category;
+        const req_image = req.body.image;
 
-
-        const note = new Note(userId, req_title, req_body, req_cat);
+        const note = new Note(userId, req_title, req_body, req_cat, req_image);
 
         db.collection(TABLE_NOTES).insert(note, (err, result) => {
             if (err) {
