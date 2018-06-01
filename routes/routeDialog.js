@@ -4,7 +4,68 @@ let ctr = require('../control/middleware.js');
 let Message = require('../models/message.js');
 
 const TABLE_DIALOGS = 'dialogs';
+const TABLE_MEMBERS = 'members';
+
 module.exports = function(app, db) {
+
+    app.get('/api/members/', //get messages from dialog
+        function(req, res) {
+            let id = req.user.id;
+
+
+
+            const query = { 'userId': id };
+
+            db.collection(TABLE_MEMBERS).find(query)
+                .skip(0).limit(100)
+                .toArray((err, item) => {
+                    if (err) {
+                        res.send({'error':'An error has occurred'});
+                    } else {
+
+                        res.send(item);
+                    }
+                });
+        });
+
+
+    app.post('/api/members/', ctr.isLoggedIn, //ctr.requireAdmin,
+        function(req, res) {
+            let userId = req.user.id;
+
+            const req_username = req.body.username;
+            const req_city = req.body.city;
+            const req_description = req.body.description;
+
+
+
+            const profile = new Profile(userId, req_email, req_username, req_city, req_description);
+
+
+            var query = {
+                'userId': userId
+            };
+            var newvalues = {
+                $set: {
+                    'userId': userId,
+                    'email': req_email,
+                    'username': req_username,
+                    'city': req_city,
+                    'description': req_description
+                } };
+            db.collection(TABLE_PROFILES).update(query, newvalues, { upsert: true },  function(err,data){
+                if (err){
+                    console.log(err);
+                }else{
+                    console.log('created');
+                    res.send(profile);
+                }
+            });
+
+
+
+        });
+
     app.get('/api/dialogs/', //get messages from dialog
         function(req, res) {
             let id = req.user.id;

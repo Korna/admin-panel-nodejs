@@ -66,10 +66,11 @@ module.exports = function(app, db) {
         const req_username = req.body.username;
         const req_city = req.body.city;
         const req_description = req.body.description;
+        const req_image = req.body.image;
 
 
 
-        const profile = new Profile(userId, req_email, req_username, req_city, req_description);
+        const profile = new Profile(userId, req_email, req_username, req_city, req_description, req_image);
 
 
         var query = {
@@ -81,7 +82,8 @@ module.exports = function(app, db) {
                 'email': req_email,
                 'username': req_username,
                 'city': req_city,
-                'description': req_description
+                'description': req_description,
+                'image' : req_image
         } };
         db.collection(TABLE_PROFILES).update(query, newvalues, { upsert: true },  function(err,data){
             if (err){
