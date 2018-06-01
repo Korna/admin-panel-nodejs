@@ -1,26 +1,18 @@
-const express = require('express');
-var app = express();
-//var router = express.Router();
-const path = require('path');
-const favicon = require('serve-favicon');
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-
-const port = process.env.PORT || 3000;
-
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-
-
-const MongoClient = require('mongodb').MongoClient;
-
-const mongoose = require('mongoose');
-const flash = require('connect-flash');
-const session = require('express-session');
-
-
-const configDB = require('./config/database.js');
+const express = require('express'),
+    app = express(),
+    path = require('path'),
+    favicon = require('serve-favicon'),
+    logger = require('morgan'),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
+    port = process.env.PORT || 3000,
+    passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy,
+    MongoClient = require('mongodb').MongoClient,
+    mongoose = require('mongoose'),
+    flash = require('connect-flash'),
+    session = require('express-session'),
+    configDB = require('./config/database.js');
 
 //connect to MongoDB
 mongoose.connect(configDB.url);
