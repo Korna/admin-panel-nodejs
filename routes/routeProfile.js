@@ -4,9 +4,11 @@ let ctr = require('../control/middleware.js');
 let Profile = require('../models/profile.js');
 
 const TABLE_PROFILES = 'profiles';
+const TABLE_USERS = 'users';
+
 module.exports = function(app, db) {
 
-    app.get('/api/profile/get/', //ctr.isLoggedIn, ctr.requireAdmin,
+    app.get('/api/profile/', ctr.isLoggedIn, //ctr.requireAdmin,
         function(req, res) {
             let userId = req.user.id;
             // const req = req.params.email; // :email
@@ -29,40 +31,25 @@ module.exports = function(app, db) {
                 if (err) {
                     res.send({'error':'An error has occurred'});
                 } else {
-                    res.send(item);
+                    if(item != undefined)
+                        res.send(item);
+                    else
+                        res.status(501).end();
                 }
             });
         });
 
-    app.post('/api/profile/updateFcm/', //ctr.isLoggedIn, ctr.requireAdmin, TODO change whole route
+    app.post('/api/updateFcm/', ctr.isLoggedIn,// ctr.requireAdmin, TODO change whole route
         function(req, res) {
             // const req = req.params.email; // :email
             let userId = req.user.id;
             const fcmToken = req.body.fcmToken;
 
-            //   const projection = {_id:1, text: "", title: "", image: ""};
-            //const
-            /*
-            db.collection(TABLE_NOTES).find(details, projection, (err, item) => {
-                if (err) {
-                    res.send({'error':'An error has occurred'});
-                } else {
-                    res.send(item);
-                }
-            });*/
 
-
-            /*
-                collection.update(
-                {_id: ObjectId(req.session.userID)},
-                {$set: req.body }
-                )
-             */
-
-            var query = { 'userId': userId };
+            var query = { 'id': userId };
             var newvalues = { $set: {'fcmToken': fcmToken } };
 
-            db.collection(TABLE_PROFILES).updateOne(query, newvalues, (err, item) => {
+            db.collection(TABLE_USERS).updateOne(query, newvalues, (err, item) => {
                 if (err) {
                     res.send({'error':'An error has occurred'});
                 } else {
@@ -71,30 +58,42 @@ module.exports = function(app, db) {
             });
         });
 
-    app.post('/api/profile/', //ctr.isLoggedIn, ctr.requireAdmin,
+    app.post('/api/profile/', ctr.isLoggedIn, //ctr.requireAdmin,
         function(req, res) {
         let userId = req.user.id;
-        const details = { 'userId': userId };
-       // console.log(req.body);
+        const req_email = req.user.email;
 
-
-       // const req_body = req.body.body;
-
-        const req_userName = req.body.userName;
+        const req_username = req.body.username;
         const req_city = req.body.city;
-        const req_email = req.body.email;
+        const req_description = req.body.description;
 
-        //const profile = req.body;
 
-        const profile = new Profile(userId, req_email, req_userName, req_city);
 
-        db.collection(TABLE_PROFILES).insert(profile, (err, result) => {
-            if (err) {
-                res.send({ 'error': 'An error has occurred' });
-            } else {
-                res.send(result.ops[0]);
+        const profile = new Profile(userId, req_email, req_username, req_city, req_description);
+
+
+        var query = {
+            'userId': userId
+        };
+        var newvalues = {
+            $set: {
+            'userId': userId,
+                'email': req_email,
+                'username': req_username,
+                'city': req_city,
+                'description': req_description
+        } };
+        db.collection(TABLE_PROFILES).update(query, newvalues, { upsert: true },  function(err,data){
+            if (err){
+                console.log(err);
+            }else{
+                console.log('created');
+                res.send(profile);
             }
         });
+
+
+
     });
 
 };

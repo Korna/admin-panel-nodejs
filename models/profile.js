@@ -1,11 +1,13 @@
 module.exports = class Profile{
 
-    constructor(userId, email, userName, city){
+    constructor(userId, email, userName, city,
+                description){
      //   this.id = id;
         this.userId = userId;
         this.email = email;
-        this.userName = userName;
+        this.username = userName;
         this.city = city;
+        this.description = description;
     }
 
 };

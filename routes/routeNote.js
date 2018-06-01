@@ -1,6 +1,8 @@
 const ObjectID = require('mongodb').ObjectID;
 let ctr = require('../control/middleware.js');
 
+let fcm = require('../control/fcm.js');
+
 let Note = require('../models/note.js');
 
 
@@ -88,18 +90,19 @@ module.exports = function(app, db) {
         console.log(req.body);
         let userId = req.user.id;
 
-        const req_body = req.body.body;
-        const req_title = req.body.title;
+        const req_body = req.body.name;
+        const req_title = req.body.description;
         const req_cat = req.body.category;
 
 
-        const note = new Note(userId, req_body, req_title, req_cat);
+        const note = new Note(userId, req_title, req_body, req_cat);
 
         db.collection(TABLE_NOTES).insert(note, (err, result) => {
             if (err) {
                 res.send({ 'error': 'An error has occurred' });
             } else {
                 res.send(result.ops[0]);
+                fcm.sendToTopic('notes', req_title, req_body);
             }
         });
     });
