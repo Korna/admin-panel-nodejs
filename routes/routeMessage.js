@@ -2,52 +2,84 @@
 const ObjectID = require('mongodb').ObjectID;
 let ctr = require('../control/middleware.js');
 let Message = require('../models/message.js');
+let DialogMember = require('../models/dialogMember.js');
+let User = require('../models/user.js');
 
-const TABLE_MESSAGES = 'messages';
+let fcm = require('../control/fcm.js');
+
 
 module.exports = function(app, db) {
 
-    app.get('/api/chat/messages/:idDialog', //get messages from dialog
+    app.post('/api/chat/message/get', ctr.isLoggedIn, //get messages from dialog
         function(req, res) {
-            let email = req.user.email;
+            const dialogId = req.body.dialogId;
 
-            const idDialog = req.params.idDialog;
+            const query = {'dialogId': dialogId};
 
-
-
-           // const details = { 'email': email };
-
-            const query = {'idDialog': idDialog};
-            const from = 0;
-            const to = 100;
-
-            db.collection(TABLE_MESSAGES).find(query)
-                .skip(from).limit(to)
-                .toArray((err, item) => {
+            Message.find(query)
+                .exec((err, item) => {
                 if (err) {
                     res.send({'error':'An error has occurred'});
                 } else {
-                    res.send(item);
+                    const reversed = item.reverse();
+                    res.send(reversed);
                 }
             });
         });
 
-    app.post('/api/chat/message/',
+    app.post('/api/chat/message/', ctr.isLoggedIn,
         function(req, res) {
-            console.log(req.body);
+           // console.log(req.body);
+            const dialogId = req.body.dialogId;
+            const text = req.body.text;
+            const senderId = req.user.id;
+            const message = new Message();
+            message.dialogId = dialogId;
+            message.senderId = senderId;
+            message.text = text;
+            message.timeSent = Date.now();
+         //   console.log('userId' + req.user.id);
 
-            const req_idDialog  = req.body.idDialog;
-            const req_text  = req.body.text;
-            const req_time = req.body.timeSent;
-
-
-            const message = new Message(req_idDialog, req_text, req_time);
-
-            db.collection(TABLE_MESSAGES).insert(message, (err, result) => {
+            message.save((err, result) => {
                 if (err) {
                     res.send({ 'error': 'An error has occurred' });
                 } else {
-                    res.send(result.ops[0]);
+                 //   console.log(result);
+                    res.send(result);
+
+                    const query = {'dialogId': dialogId};
+
+                    DialogMember.find(query)//.populate('memberId')
+                        .exec((err, dialogs) => {
+                        if (err) {
+                            res.send({'error': 'An error has occurred'});
+                        } else {
+
+                            let idList = [];
+                            dialogs.forEach(function (item) {
+                                idList.push(item.memberId);
+
+                            });
+                            User.find({'_id': {$in: idList}})
+                                .populate('optionsId')
+                                .exec((err, users) => {
+                                users.forEach(function (user) {
+                                    let token = user.fcmToken;
+
+                                    let receiverId = user.id;
+                                    if(user.optionsId == null || user.optionsId.receiveFcm == true)
+                                        if(senderId !== receiverId)
+                                            fcm.sendToDevice(token, 'New message', text);
+
+                                    console.log(user);
+                                })
+
+
+                            });
+
+                        }
+                    });
+
                 }
             });
         });

@@ -1,6 +1,8 @@
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('../models/user');
 
+const ObjectID = require('mongodb').ObjectID;
+
 module.exports = function(passport) {
 
   passport.serializeUser(function(user, done) {
@@ -27,8 +29,12 @@ module.exports = function(passport) {
           return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
         } else {
           var newUser = new User();
+          let id = new ObjectID();
+          newUser._id = id;
           newUser.email = email;
           newUser.password = newUser.generateHash(password);
+          newUser.optionsId = id;
+
           newUser.save(function(err) {
             if (err)
               throw err;

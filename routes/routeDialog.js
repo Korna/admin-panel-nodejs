@@ -8,7 +8,7 @@ let ChatMember = require('../models/dialogMember.js');
 
 
 module.exports = function(app, db) {
-
+/*
     app.get('/api/messages/:id', //get messages from dialog
         function(req, res) {
             let id = req.params.id;
@@ -24,10 +24,10 @@ module.exports = function(app, db) {
                         res.send(item);
                     }
                 });
-        });
+        });*/
 
 
-
+/*
     app.post('/api/dialogs/', //get messages from dialog
         function(req, res) {
           // let userId = req.user.id;
@@ -66,6 +66,31 @@ module.exports = function(app, db) {
                 });
 
 
+        });*/
+
+    app.get('/api/dialogs/my', ctr.isLoggedIn,//get dialog with user
+        function(req, res) {
+            let userId = req.user.id;
+
+            const query = {'memberId': userId};
+
+            ChatMember.find(query).exec(function(err, items) {
+
+                let dialogList = [];
+                items.forEach(function(item) {
+                    dialogList.push(item.dialogId);
+                });
+                const subquery = {'_id': {$in: dialogList}};
+
+                Dialog.find(subquery).exec((err, items) => {// save second member
+                    if (err) {
+                        res.send({'error':'An error while creating member2'});
+                    }else{
+                        res.send(items);//send id of dialog
+                    }
+                });
+            });
+
         });
 
     app.post('/api/dialogs/create/', ctr.isLoggedIn,//get dialog with user
@@ -76,7 +101,7 @@ module.exports = function(app, db) {
             res.sendStatus(400).end();
             return ;
         } else
-            if(companionId === userId){
+            if(companionId === userId){//TODO make something like message
              //  res.sendStatus(400).end();//cant create dialog with self
              //  return ;
             }
@@ -128,7 +153,8 @@ module.exports = function(app, db) {
                 }else{
                     console.log('Found common dialog. Count is:' + intList.length);
                     console.log('First dialog:' + intList[0]);
-                    res.send(intList[0]);//send id of dialog
+                    const val = intList[0];
+                    res.send(val.toString());//send id of dialog
                 }
 
 

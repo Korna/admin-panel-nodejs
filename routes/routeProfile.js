@@ -2,11 +2,9 @@ const ObjectID = require('mongodb').ObjectID;
 let ctr = require('../control/middleware.js');
 
 let Profile = require('../models/profile.js');
-//var User = require('../models/user');
+let User = require('../models/user');
 
 
-const TABLE_PROFILES = 'profiles';
-const TABLE_USERS = 'users';
 
 module.exports = function(app, db) {
 
@@ -44,7 +42,7 @@ module.exports = function(app, db) {
            // Profile.
         });
 
-    app.post('/api/updateFcm/', ctr.isLoggedIn,
+    app.post('/api/profile/updateFcm', ctr.isLoggedIn,
         function(req, res) {
             // const req = req.params.email; // :email
             let userId = req.user.id;
@@ -54,7 +52,7 @@ module.exports = function(app, db) {
             var query = { '_id': userId };
             var newvalues = { $set: {'fcmToken': fcmToken } };
 
-            Profile.updateOne(query, newvalues, (err, item) => {//TODO maybe updateOne is incorrect and we should use update
+            User.updateOne(query, newvalues, (err, item) => {//TODO maybe updateOne is incorrect and we should use update
                 if (err) {
                     res.send({'error':'An error has occurred'});
                 } else {

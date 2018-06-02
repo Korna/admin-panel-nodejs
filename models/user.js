@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
 
+let Schema = mongoose.Schema;
+
 var userSchema = mongoose.Schema({
         name: {
             type: String
@@ -20,7 +22,10 @@ var userSchema = mongoose.Schema({
         },
         fcmToken: {
             type: String
-        }
+        },
+        optionsId: {
+            type: Schema.ObjectId,
+            ref: 'Options' }
 
 });
 
