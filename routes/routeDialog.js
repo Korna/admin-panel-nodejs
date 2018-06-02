@@ -68,117 +68,109 @@ module.exports = function(app, db) {
 
         });
 
-
-
-
-
-
-
-
-
-
-
-
-
-    /*app.get('/api/members/', //get messages from dialog
+    app.post('/api/dialogs/create/', ctr.isLoggedIn,//get dialog with user
         function(req, res) {
-            let id = req.user.id;
+        let userId = req.user.id;
+        let companionId = req.body.companionId;
+        if(companionId === undefined){
+            res.sendStatus(400).end();
+            return ;
+        } else
+            if(companionId === userId){
+             //  res.sendStatus(400).end();//cant create dialog with self
+             //  return ;
+            }
+
+
+        let list = [];
+        list.push(userId);
+        list.push(companionId);
+
+            const query = {'memberId':{$in: list}};
+
+            ChatMember.find(query).exec(function(err, items) {
+                let intList = getIntersect(items, companionId, userId);
+
+                if(intList.length === 0){
+                    let dialog = new Dialog();
+                    let id = new ObjectID();
+                    dialog._id = id;
+
+                    dialog.save(//create dialog
+                        (err, createdDialog) => {
+                            if (err) {
+                                res.send({'error':'An error while creating dialog'});
+                            } else {
+                                let member1 = new ChatMember();
+                                member1.dialogId = id;
+                                member1.memberId = userId;
+                                member1.save((err, item) => {//save first member
+                                    if (err) {
+                                        res.send({'error':'An error while creating member1'});
+                                    }else {
+                                        let member2 = new ChatMember();
+                                        member2.dialogId = id;
+                                        member2.memberId = companionId;
+                                        member2.save((err, item) => {// save second member
+                                            if (err) {
+                                                res.send({'error':'An error while creating member2'});
+                                            }else{
+                                                res.send(id);//send id of dialog
+                                            }
+                                        });
 
 
 
-            const query = { 'userId': id };
-
-            db.collection(TABLE_MEMBERS).find(query)
-                .skip(0).limit(100)
-                .toArray((err, item) => {
-                    if (err) {
-                        res.send({'error':'An error has occurred'});
-                    } else {
-
-                        res.send(item);
-                    }
-                });
-        });
-
-
-    app.post('/api/members/', ctr.isLoggedIn, //ctr.requireAdmin,
-        function(req, res) {
-            let userId = req.user.id;
-
-            const req_username = req.body.username;
-            const req_city = req.body.city;
-            const req_description = req.body.description;
-
-
-
-            const profile = new Profile(userId, req_email, req_username, req_city, req_description);
-
-
-            var query = {
-                'userId': userId
-            };
-            var newvalues = {
-                $set: {
-                    'userId': userId,
-                    'email': req_email,
-                    'username': req_username,
-                    'city': req_city,
-                    'description': req_description
-                } };
-            db.collection(TABLE_PROFILES).update(query, newvalues, { upsert: true },  function(err,data){
-                if (err){
-                    console.log(err);
+                                    }
+                                });
+                            }
+                        });
                 }else{
-                    console.log('created');
-                    res.send(profile);
+                    console.log('Found common dialog. Count is:' + intList.length);
+                    console.log('First dialog:' + intList[0]);
+                    res.send(intList[0]);//send id of dialog
                 }
+
+
             });
 
 
 
         });
 
-    app.get('/api/dialogs/', //get messages from dialog
-        function(req, res) {
-            let id = req.user.id;
+    function getIntersect(items, companionId, userId) {
+        let userDialogs = [];
+        let companionDialogs = [];
 
-            const idDialog = req.params.idDialog;
+        items.forEach(function(event) {
+            let memberId = event.memberId;
+            let dialogId = event.dialogId;
+            console.log('memberId:' + memberId + ' userId:' + userId);
 
-
-            const query = { 'email': email };
-            const from = 0;
-            const to = 100;
-
-            db.collection(TABLE_DIALOGS).find(query)
-                .skip(from).limit(to)
-                .toArray((err, item) => {
-                if (err) {
-                    res.send({'error':'An error has occurred'});
-                } else {
-                    res.send(item);
-                }
-            });
+            if(companionId === userId){
+                userDialogs.push(dialogId);
+                companionDialogs.push(dialogId);
+            }else
+            if(userId == memberId)
+                userDialogs.push(dialogId);
+            else
+                companionDialogs.push(dialogId);
         });
 
-    app.post('/api/dialogs/',
-        function(req, res) {
-            let id = req.user.id;
-            console.log(req.body);
+        console.log('Userlist:' + userDialogs);
+        console.log('Companionlist:' + companionDialogs);
 
-           // const req_idDialog  = req.body.idDialog;
-           // const req_text  = req.body.text;
-           // const req_time = req.body.timeSent;
-            const query = { 'id': id };
+        let intList = intersect(userDialogs, companionDialogs);
+        console.log('IntList:' + intList);
+        return intList;
+    }
 
-            //const message = new Message(req_idDialog, req_text, req_time);
+    function intersect(a, b) {
+        const setA = new Set(a);
+        const setB = new Set(b);
+        const intersection = new Set([...setA].filter(x => setB.has(x)));
+        return Array.from(intersection);
+    }
 
-            db.collection(TABLE_DIALOGS).insert(message, (err, result) => {
-                if (err) {
-                    res.send({ 'error': 'An error has occurred' });
-                } else {
-                    res.send(result.ops[0]);
-                }
-            });
-        });*/
 
 };

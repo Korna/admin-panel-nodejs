@@ -74,11 +74,8 @@ module.exports = function(app, db) {
         const req_image = req.body.image;
 
 
-      //  const profileModel =  Object.assign(req.body);
 
             var profileModel = {
-              //  '_id' : userId,
-
                 $set: {
 
                     'email': req_email,
@@ -88,7 +85,7 @@ module.exports = function(app, db) {
                     'image' : req_image
                 } };
 
-        profileModel.email = req.user.email;
+            profileModel.email = req.user.email;
 
         var query = {
             '_id': userId
