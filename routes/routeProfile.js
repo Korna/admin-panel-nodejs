@@ -2,6 +2,8 @@ const ObjectID = require('mongodb').ObjectID;
 let ctr = require('../control/middleware.js');
 
 let Profile = require('../models/profile.js');
+//var User = require('../models/user');
+
 
 const TABLE_PROFILES = 'profiles';
 const TABLE_USERS = 'users';
@@ -15,7 +17,7 @@ module.exports = function(app, db) {
 
 
 
-            const details = { 'userId': userId };
+            const details = { '_id': userId };
          //   const projection = {_id:1, text: "", title: "", image: ""};
             //const
             /*
@@ -27,7 +29,8 @@ module.exports = function(app, db) {
                 }
             });*/
 
-            db.collection(TABLE_PROFILES).findOne(details, (err, item) => {
+           // db.collection(TABLE_PROFILES).
+            Profile.findOne(details, (err, item) => {
                 if (err) {
                     res.send({'error':'An error has occurred'});
                 } else {
@@ -37,19 +40,21 @@ module.exports = function(app, db) {
                         res.status(501).end();
                 }
             });
+
+           // Profile.
         });
 
-    app.post('/api/updateFcm/', ctr.isLoggedIn,// ctr.requireAdmin, TODO change whole route
+    app.post('/api/updateFcm/', ctr.isLoggedIn,
         function(req, res) {
             // const req = req.params.email; // :email
             let userId = req.user.id;
             const fcmToken = req.body.fcmToken;
 
 
-            var query = { 'id': userId };
+            var query = { '_id': userId };
             var newvalues = { $set: {'fcmToken': fcmToken } };
 
-            db.collection(TABLE_USERS).updateOne(query, newvalues, (err, item) => {
+            Profile.updateOne(query, newvalues, (err, item) => {//TODO maybe updateOne is incorrect and we should use update
                 if (err) {
                     res.send({'error':'An error has occurred'});
                 } else {
@@ -61,41 +66,45 @@ module.exports = function(app, db) {
     app.post('/api/profile/', ctr.isLoggedIn, //ctr.requireAdmin,
         function(req, res) {
         let userId = req.user.id;
-        const req_email = req.user.email;
 
+        const req_email = req.user.email;
         const req_username = req.body.username;
         const req_city = req.body.city;
         const req_description = req.body.description;
         const req_image = req.body.image;
 
 
+      //  const profileModel =  Object.assign(req.body);
 
-        const profile = new Profile(userId, req_email, req_username, req_city, req_description, req_image);
+            var profileModel = {
+              //  '_id' : userId,
 
+                $set: {
+
+                    'email': req_email,
+                    'username': req_username,
+                    'city': req_city,
+                    'description': req_description,
+                    'image' : req_image
+                } };
+
+        profileModel.email = req.user.email;
 
         var query = {
-            'userId': userId
+            '_id': userId
         };
-        var newvalues = {
-            $set: {
-            'userId': userId,
-                'email': req_email,
-                'username': req_username,
-                'city': req_city,
-                'description': req_description,
-                'image' : req_image
-        } };
-        db.collection(TABLE_PROFILES).update(query, newvalues, { upsert: true },  function(err,data){
-            if (err){
-                console.log(err);
-            }else{
-                console.log('created');
-                res.send(profile);
-            }
-        });
 
 
 
+        Profile.update(query, profileModel, {upsert: true},
+            function(err, data){
+                if (err){
+                    console.log(err);
+                }else{
+                    console.log('created');
+                    res.send(data);
+                }
+            });
     });
 
 };

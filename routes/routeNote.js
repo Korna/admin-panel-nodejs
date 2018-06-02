@@ -3,10 +3,8 @@ let ctr = require('../control/middleware.js');
 
 let fcm = require('../control/fcm.js');
 
-let Note = require('../models/note.js');
+let Event = require('../models/event.js');
 
-
-const TABLE_NOTES = 'notes';
 
 module.exports = function(app, db) {
 
@@ -17,11 +15,11 @@ module.exports = function(app, db) {
 
         console.log('req.id' + req.params.id);
 
-        db.collection(TABLE_NOTES).remove(details, (err, item) => {
+        Event.remove(details, (err, item) => {
             if (err) {
                 res.send({'error':'An error has occurred'});
             } else {
-                res.send('Note ' + id + ' deleted!');
+                res.send('Event ' + id + ' deleted!');
             }
         });
     });
@@ -43,13 +41,16 @@ module.exports = function(app, db) {
             }
         });*/
 
-        db.collection(TABLE_NOTES).findOne(details, (err, item) => {
+        Event.findOne(details, (err, item) => {
             if (err) {
                 res.send({'error':'An error has occurred'});
             } else {
                 res.send(item);
             }
         });
+
+
+
     });
 
     app.get('/api/notes/all/', ctr.isLoggedIn, function(req, res) {
@@ -59,14 +60,25 @@ module.exports = function(app, db) {
         const from = 0;
         const to = 30;
 
-        db.collection(TABLE_NOTES).find(query)
-            .skip(from).limit(to).toArray((err, item) => {
-            if (err) {
-                res.send({'error':'An error has occurred'});
-            } else {
-                res.send(item);
-            }
+        Event.find(query).populate('authorId')
+            .exec(function(err, items) {
+            let userMap = [];
+
+            items.forEach(function(user) {
+                userMap.push(user);
+
+            });
+            /* hashmap
+            var userMap = {};
+            users.forEach(function(user) {
+                userMap[user._id] = user;
+            });*/
+
+            res.send(userMap);
         });
+
+
+
     });
 
 
@@ -83,15 +95,28 @@ module.exports = function(app, db) {
         const req_lat = req.body.latitude;
         const req_lon = req.body.longitude;
 
-        const note = new Note(userId, req_title, req_body, req_cat,
-            req_image,
-            req_lat, req_lon);
+        //const note = new Note(userId, req_title, req_body, req_cat,
+        //    req_image,
+        //    req_lat, req_lon);
 
-        db.collection(TABLE_NOTES).insert(note, (err, result) => {
+
+        const event =  new Event();//Object.assign(req.body);
+        event.authorId = userId;
+        event.name = req_title;
+        event.description = req_body;
+        event.category = req_cat;
+        event.image = req_image;
+        event.latitude = req_lat;
+        event.longitude = req_lon;
+
+
+
+        event.save((err, result) => {
             if (err) {
                 res.send({ 'error': 'An error has occurred' });
             } else {
-                res.send(result.ops[0]);
+                //res.send(result.ops[0]);
+                res.status(200).end();
                 fcm.sendToTopic('notes', req_title, req_body);
             }
         });

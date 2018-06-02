@@ -1,9 +1,11 @@
-module.exports = class Dialog{
+const mongoose = require('mongoose');
+let Schema = mongoose.Schema;
+const DialogSchema = new Schema({
+    name: {type: String
+    },
+    members: [{
+        type: Schema.ObjectId,
+        ref: 'Profile' }]
 
-    constructor(id, userName, userId){
-        this.id = id;
-        this.userName = userName;
-        this.userId = userId;
-    }
-
-}
+});
+module.exports =  mongoose.model('Dialog', DialogSchema);

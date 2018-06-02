@@ -1,14 +1,86 @@
 
 const ObjectID = require('mongodb').ObjectID;
 let ctr = require('../control/middleware.js');
-let Message = require('../models/message.js');
 
-const TABLE_DIALOGS = 'dialogs';
-const TABLE_MEMBERS = 'members';
+let Message = require('../models/message.js');
+let Dialog = require('../models/dialog.js');
+let ChatMember = require('../models/dialogMember.js');
+
 
 module.exports = function(app, db) {
 
-    app.get('/api/members/', //get messages from dialog
+    app.get('/api/messages/:id', //get messages from dialog
+        function(req, res) {
+            let id = req.params.id;
+
+            const query = { 'dialogId': id };
+
+            Message.find(query)
+                .skip(0).limit(100)
+                .toArray((err, item) => {
+                    if (err) {
+                        res.send({'error':'An error has occurred'});
+                    } else {
+                        res.send(item);
+                    }
+                });
+        });
+
+
+
+    app.post('/api/dialogs/', //get messages from dialog
+        function(req, res) {
+          // let userId = req.user.id;
+          // let memberId = req.body.id;
+
+            let name = req.body.name;
+            let query = {
+                '_id': _id
+            };
+
+            var model = {
+                $set: {
+                    'name': name
+                } };
+
+            Dialog.update(query, model, {upsert: true},
+                function(err, data){
+                    if (err){
+                        console.log(err);
+                    }else{
+                        console.log('created');
+                        res.send(data);
+
+                        const _id = data._id;
+
+                        ChatMember.update(query, profileModel, {upsert: true},
+                            function(err, data){
+                                if (err){
+                                    console.log(err);
+                                }else{
+                                    console.log('created');
+                                    res.send(data);
+                                }
+                            });
+                    }
+                });
+
+
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*app.get('/api/members/', //get messages from dialog
         function(req, res) {
             let id = req.user.id;
 
@@ -107,6 +179,6 @@ module.exports = function(app, db) {
                     res.send(result.ops[0]);
                 }
             });
-        });
+        });*/
 
 };

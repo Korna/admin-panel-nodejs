@@ -1,10 +1,12 @@
-module.exports = class Message{
+const mongoose = require('mongoose');
+let Schema = mongoose.Schema;
 
-    constructor(idDialog, text, timeSent) {
-        this.idDialog = idDialog;
-        this.text = text;
-        this.timeSent = timeSent;
-    }
+const MessageSchema = new Schema({
+    dialogId: {type: String},
+    senderId: {type: String,
+        ref: 'Profile' },
+    text: {type: String},
+    timeSent: {type: String}
+});
 
-
-};
+module.exports = mongoose.model('Message', MessageSchema);

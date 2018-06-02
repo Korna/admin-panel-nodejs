@@ -1,14 +1,12 @@
-module.exports = class Profile{
+const mongoose = require('mongoose');
+let Schema = mongoose.Schema;
 
-    constructor(userId, email, userName, city,
-                description, image){
-     //   this.id = id;
-        this.userId = userId;
-        this.email = email;
-        this.username = userName;
-        this.city = city;
-        this.description = description;
-        this.image = image;
-    }
+const ProfileSchema = new Schema({
+    email: {type: String},
+    username: {type: String},
+    city: {type: String},
+    description: {type: String},
+    image: {type: String}
+});
 
-};
+module.exports =  mongoose.model('Profile', ProfileSchema);
