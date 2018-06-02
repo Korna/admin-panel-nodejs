@@ -78,6 +78,7 @@ let profile = require('./routes/routeProfile')(app, db);
 let dialog = require('./routes/routeDialog')(app, db);
 let message = require('./routes/routeMessage')(app, db);
 let options = require('./routes/routeOptions')(app, db);
+let userz = require('./routes/users')(app, db);
 
 app.use('/', routes);
 app.use('/users', users);

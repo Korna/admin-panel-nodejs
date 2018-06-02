@@ -25,7 +25,10 @@ var userSchema = mongoose.Schema({
         },
         optionsId: {
             type: Schema.ObjectId,
-            ref: 'Options' }
+            ref: 'Options' },
+        profileId: {
+            type: Schema.ObjectId,
+            ref: 'Profile' }
 
 });
 

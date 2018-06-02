@@ -9,7 +9,8 @@ let EventMember = require('../models/eventMember.js');
 module.exports = function(app, db) {
 
 
-    app.delete('/api/notes/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
+    app.delete('/api/notes/:id', ctr.isLoggedIn, //ctr.requireAdmin,
+        function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
 
@@ -25,7 +26,8 @@ module.exports = function(app, db) {
     });
 
 
-    app.get('/api/notes/get/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
+    app.get('/api/notes/get/:id', ctr.isLoggedIn, ctr.requireAdmin,
+        function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
 

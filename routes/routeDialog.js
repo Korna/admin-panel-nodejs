@@ -8,66 +8,6 @@ let ChatMember = require('../models/dialogMember.js');
 
 
 module.exports = function(app, db) {
-/*
-    app.get('/api/messages/:id', //get messages from dialog
-        function(req, res) {
-            let id = req.params.id;
-
-            const query = { 'dialogId': id };
-
-            Message.find(query)
-                .skip(0).limit(100)
-                .toArray((err, item) => {
-                    if (err) {
-                        res.send({'error':'An error has occurred'});
-                    } else {
-                        res.send(item);
-                    }
-                });
-        });*/
-
-
-/*
-    app.post('/api/dialogs/', //get messages from dialog
-        function(req, res) {
-          // let userId = req.user.id;
-          // let memberId = req.body.id;
-
-            let name = req.body.name;
-            let query = {
-                '_id': _id
-            };
-
-            var model = {
-                $set: {
-                    'name': name
-                } };
-
-            Dialog.update(query, model, {upsert: true},
-                function(err, data){
-                    if (err){
-                        console.log(err);
-                    }else{
-                        console.log('created');
-                        res.send(data);
-
-                        const _id = data._id;
-
-                        ChatMember.update(query, profileModel, {upsert: true},
-                            function(err, data){
-                                if (err){
-                                    console.log(err);
-                                }else{
-                                    console.log('created');
-                                    res.send(data);
-                                }
-                            });
-                    }
-                });
-
-
-        });*/
-
     app.get('/api/dialogs/my', ctr.isLoggedIn,//get dialog with user
         function(req, res) {
             let userId = req.user.id;

@@ -13,12 +13,19 @@ router.get('/login', function(req, res, next) {
   res.render('login.ejs', { message: req.flash('loginMessage') });
 });
 
-router.get('/list', ctr.isLoggedIn, function(req, res, next) {
+router.get('/list', ctr.isLoggedIn
+    , function(req, res, next) {
     res.render('list.ejs', { message: req.flash('loginMessage') });
 });
 
-router.get('/notes', ctr.isLoggedIn, function(req, res, next) {
+router.get('/notes', ctr.isLoggedIn
+    , function(req, res, next) {
     res.render('notes.ejs', { message: req.flash('loginMessage') });
+});
+
+router.get('/users', ctr.isLoggedIn
+    , function(req, res, next) {
+    res.render('users.ejs', { message: req.flash('loginMessage') });
 });
 
 router.get('/signup', function(req, res) {
