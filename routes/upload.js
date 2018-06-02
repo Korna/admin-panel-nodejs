@@ -1,12 +1,14 @@
 
+let ctr = require('../control/middleware.js');
+
 
 module.exports = function(app, fs, type, path) {
-    app.get("/upload/:name", isLoggedIn, function(req, res) {
+    app.get("/upload/:name", ctr.isLoggedIn, function(req, res) {
         const name = req.params.name;
         res.sendFile(path.resolve('./upload/' + name));
     });
 
-    app.post('/upload', type, isLoggedIn, requireAdmin, function (req,res) {
+    app.post('/upload', type, ctr.isLoggedIn, ctr.requireAdmin, function (req,res) {
         const tmp_path = req.file.path;
         const target_path = 'upload/' + req.file.originalname;
 
@@ -24,17 +26,7 @@ module.exports = function(app, fs, type, path) {
 
 };
 
-function isLoggedIn(req, res, next) {
-    console.log('Authenticated:' + req.isAuthenticated());
-
-    if (req.isAuthenticated())
-        return next();
-    else{
-        res.status(403);
-        res.send({ 'error': 'You are not authenticated' });
-    }
-}
-
+/*
 const User = require('../models/user');
 
 function requireAdmin(req, res, next) {
@@ -53,4 +45,4 @@ function requireAdmin(req, res, next) {
             next();
 
     });
-}
+}*/
