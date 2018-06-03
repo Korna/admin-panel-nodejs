@@ -3,7 +3,7 @@
   <body>
     <div class="col-sm-8 col-sm-offset-2">
       <div class="text-center">
-        <h1 class=" fa fa-user"> Profile</h1><br>
+        <h1 class=" fa fa-user"> Профиль</h1><br>
         <span><strong>user id</strong>: <%= user._id ? user._id : '' %></span><br>
         <span class="fa fa-sign-out"><a href="/"> Sign out</a></span>
         <hr>
@@ -16,18 +16,18 @@
 
         <form action="/list" method="get">
         <div>
-          <input type="submit" class="form-control" value="Events list" />
+          <input type="submit" class="form-control" value="События" />
         </div>
         </form>
         <form action="/notes" method="get">
           <div>
-            <input type="submit" class="form-control" value="Create event" />
+            <input type="submit" class="form-control" value="Создать событие" />
           </div>
         </form>
 
         <form action="/users" method="get">
           <div>
-            <input type="submit" class="form-control" value="User list" />
+            <input type="submit" class="form-control" value="Пользователи" />
           </div>
         </form>
 

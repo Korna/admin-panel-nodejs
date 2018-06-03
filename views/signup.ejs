@@ -3,7 +3,7 @@
   <body>
     <div class="col-sm-8 col-sm-offset-2">
       <div class="jumbotron text-center">
-        <h1><span class="fa fa-sign-in"></span> Signup</h1>
+        <h1><span class="fa fa-sign-in"></span> Регистрация</h1>
 
         <% if (message != null) { %>
           <div class="alert-danger"><%= message %></div>
@@ -11,11 +11,11 @@
 
         <form action="/signup" method="post">
           <div class="form-group">
-              <label>Email</label>
+              <label>Почта</label>
               <input type="text" class="form-control" name="email">
           </div>
           <div class="form-group">
-            <label>Password</label>
+            <label>Пароль</label>
             <input type="password" class="form-control" name="password" />
           </div>
           <div>
@@ -24,8 +24,8 @@
         </form>
       </div>
       <hr>
-      <span class="fa fa-sign-in"> Already have an account?<a href="/login"> Login</a></span>
-      <p>Or go <a href="/">home</a>.</p>
+      <span class="fa fa-sign-in"> Уже есть аккаунт?<a href="/login"> войти</a></span>
+      <p> <a href="/">домой</a>.</p>
     </div>
   </body>
 </html>
