@@ -35,6 +35,8 @@ module.exports = function(passport) {
           newUser.password = newUser.generateHash(password);
           newUser.optionsId = id;
           newUser.profileId = id;
+         //if(email === 'admin' || email === "admin")
+         //    newUser.admin = true;
 
           newUser.save(function(err) {
             if (err)

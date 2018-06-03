@@ -9,7 +9,7 @@ let EventMember = require('../models/eventMember.js');
 module.exports = function(app, db) {
 
 
-    app.delete('/api/notes/:id', ctr.isLoggedIn, //ctr.requireAdmin,
+    app.delete('/api/notes/:id', ctr.isLoggedIn, ctr.requireAdmin,
         function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
@@ -67,7 +67,8 @@ module.exports = function(app, db) {
 
     });
 
-    app.get('/api/notes/all/', ctr.isLoggedIn, function(req, res) {
+    app.get('/api/notes/all/', ctr.isLoggedIn,
+        function(req, res) {
 
         const query = {};
         const from = 0;
@@ -79,7 +80,8 @@ module.exports = function(app, db) {
             });
     });
 
-    app.get('/api/notes/my/', ctr.isLoggedIn, function(req, res) {
+    app.get('/api/notes/my/', ctr.isLoggedIn,
+        function(req, res) {
         const query = {'memberId': req.user.id};
         let itemList = EventMember.find(query)
             .exec(function(err, items) {
@@ -99,7 +101,8 @@ module.exports = function(app, db) {
             });
     });
 
-    app.get('/api/notes/created/', ctr.isLoggedIn, function(req, res) {
+    app.get('/api/notes/created/', ctr.isLoggedIn,
+        function(req, res) {
         const query = {'authorId': req.user.id};
 
         Event.find(query).populate('authorId')

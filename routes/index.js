@@ -18,12 +18,12 @@ router.get('/list', ctr.isLoggedIn
     res.render('list.ejs', { message: req.flash('loginMessage') });
 });
 
-router.get('/notes', ctr.isLoggedIn
+router.get('/notes', ctr.isLoggedIn, ctr.requireAdmin
     , function(req, res, next) {
     res.render('notes.ejs', { message: req.flash('loginMessage') });
 });
 
-router.get('/users', ctr.isLoggedIn
+router.get('/users', ctr.isLoggedIn, ctr.requireAdmin
     , function(req, res, next) {
     res.render('users.ejs', { message: req.flash('loginMessage') });
 });

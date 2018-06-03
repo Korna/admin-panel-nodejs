@@ -22,7 +22,7 @@ module.exports = function(app, db) {
                 });
         });
 
-    app.delete('/api/users/:id', ctr.isLoggedIn, //ctr.requireAdmin,
+    app.delete('/api/users/:id', ctr.isLoggedIn, ctr.requireAdmin,
         function(req, res) {
             const id = req.params.id;
             const query = { '_id': new ObjectID(id) };
