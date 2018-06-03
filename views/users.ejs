@@ -10,7 +10,7 @@
         return result;
     }
     function loadAllNotes(){
-        var url = getUrl() + '/api/notes/all';
+        var url = getUrl() + '/api/users';
 
         fetch(url, {
             credentials: "same-origin"
@@ -18,11 +18,23 @@
             return response.json();
         }).then(function(data) {
             console.log(data);
-
             clearList();
 
             data.forEach(function(entry) {
-                add(entry.name, entry._id, entry.image);
+                let name;
+                let image;
+                if(entry.profileId == undefined)
+                    name = 'Name';
+                else{
+                    name = entry.profileId.username;
+                    image = entry.profileId.image;
+                }
+
+
+
+                add(name, entry._id, image);
+
+
             });
 
         }).catch(function() {
@@ -65,7 +77,7 @@
     }
 
     function del(count){
-        var url = getUrl()  + '/api/notes/' + count;
+        var url = getUrl()  + '/api/users/' + count;
 
         var xhr = new XMLHttpRequest();
         xhr.open("DELETE", url, true);

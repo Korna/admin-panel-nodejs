@@ -4,12 +4,13 @@ let ctr = require('../control/middleware.js');
 let fcm = require('../control/fcm.js');
 
 let Event = require('../models/event.js');
-
+let EventMember = require('../models/eventMember.js');
 
 module.exports = function(app, db) {
 
 
-    app.delete('/api/notes/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
+    app.delete('/api/notes/:id', ctr.isLoggedIn, ctr.requireAdmin,
+        function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
 
@@ -25,21 +26,10 @@ module.exports = function(app, db) {
     });
 
 
-    app.get('/api/notes/get/:id', ctr.isLoggedIn, ctr.requireAdmin, function(req, res) {
+    app.get('/api/notes/get/:id', ctr.isLoggedIn, ctr.requireAdmin,
+        function(req, res) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
-        const projection = {_id:1, text: "", title: "", image: ""};
-
-
-
-        /*
-        db.collection(TABLE_NOTES).find(details, projection, (err, item) => {
-            if (err) {
-                res.send({'error':'An error has occurred'});
-            } else {
-                res.send(item);
-            }
-        });*/
 
         Event.findOne(details, (err, item) => {
             if (err) {
@@ -53,32 +43,73 @@ module.exports = function(app, db) {
 
     });
 
-    app.get('/api/notes/all/', ctr.isLoggedIn, function(req, res) {
+    app.post('/api/notes/join', ctr.isLoggedIn,// ctr.requireAdmin,
+        function(req, res) {
+        const eventId = req.body.eventId;
+        const userId = req.user.id;
 
-        console.log('req.id' + req.params.id);
+        //console.log('event:' + eventId + ' user:' + userId);
+
+        let eventMember = new EventMember();
+        eventMember.eventId = eventId;
+        eventMember.memberId = userId;
+
+
+
+        eventMember.save(
+            (err, item) => {
+            if (err) {
+                res.send({'error':'An error has occurred'});
+            } else {
+                res.send(item);
+            }
+        });
+
+    });
+
+    app.get('/api/notes/all/', ctr.isLoggedIn,
+        function(req, res) {
+
         const query = {};
         const from = 0;
         const to = 30;
 
         Event.find(query).populate('authorId')
             .exec(function(err, items) {
-            let userMap = [];
-
-            items.forEach(function(user) {
-                userMap.push(user);
-
+                res.send(items);
             });
-            /* hashmap
-            var userMap = {};
-            users.forEach(function(user) {
-                userMap[user._id] = user;
-            });*/
+    });
 
-            res.send(userMap);
-        });
+    app.get('/api/notes/my/', ctr.isLoggedIn,
+        function(req, res) {
+        const query = {'memberId': req.user.id};
+        let itemList = EventMember.find(query)
+            .exec(function(err, items) {
+                let idList = [];
+                items.forEach(function(event) {
+                    idList.push(event.eventId);
+                });
+                //return items;
 
 
+                const subquery = {'_id':{$in: idList}};
+                Event.find(subquery).populate('authorId')
+                    .exec(function(err, items) {
 
+                        res.send(items);
+                    });
+            });
+    });
+
+    app.get('/api/notes/created/', ctr.isLoggedIn,
+        function(req, res) {
+        const query = {'authorId': req.user.id};
+
+        Event.find(query).populate('authorId')
+            .exec(function(err, items) {
+
+                res.send(items);
+            });
     });
 
 
@@ -95,9 +126,6 @@ module.exports = function(app, db) {
         const req_lat = req.body.latitude;
         const req_lon = req.body.longitude;
 
-        //const note = new Note(userId, req_title, req_body, req_cat,
-        //    req_image,
-        //    req_lat, req_lon);
 
 
         const event =  new Event();//Object.assign(req.body);
@@ -122,3 +150,23 @@ module.exports = function(app, db) {
         });
     });
 };
+/*
+list
+let itemList = [];
+items.forEach(function(event) {
+    itemList.push(event);
+});
+hashmap
+var userMap = {};
+users.forEach(function(user) {
+    userMap[user._id] = user;
+});*/
+
+/*
+db.collection(TABLE_NOTES).find(details, projection, (err, item) => {
+    if (err) {
+        res.send({'error':'An error has occurred'});
+    } else {
+        res.send(item);
+    }
+});*/

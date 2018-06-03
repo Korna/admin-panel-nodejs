@@ -6,7 +6,7 @@ const MessageSchema = new Schema({
     senderId: {type: String,
         ref: 'Profile' },
     text: {type: String},
-    timeSent: {type: String}
+    timeSent: {type: Date}
 });
 
 module.exports = mongoose.model('Message', MessageSchema);
