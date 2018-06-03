@@ -35,8 +35,8 @@ module.exports = function(app, db) {
 
     app.post('/api/dialogs/create/', ctr.isLoggedIn,//get dialog with user
         function(req, res) {
-        let userId = req.user.id;
-        let companionId = req.body.companionId;
+        let userId = req.user.id.toString();
+        let companionId = req.body.companionId.toString();
         if(companionId === undefined){
             res.sendStatus(400).end();
             return ;
@@ -63,25 +63,20 @@ module.exports = function(app, db) {
 
                     dialog.save(//create dialog
                         (err, createdDialog) => {
-                            if (err) {
-                                res.send({'error':'An error while creating dialog'});
-                            } else {
+                            if (err) res.send({'error':'An error while creating dialog'});
+                             else {
                                 let member1 = new ChatMember();
                                 member1.dialogId = id;
                                 member1.memberId = userId;
                                 member1.save((err, item) => {//save first member
-                                    if (err) {
-                                        res.send({'error':'An error while creating member1'});
-                                    }else {
+                                    if (err) res.send({'error':'An error while creating member1'});
+                                    else {
                                         let member2 = new ChatMember();
                                         member2.dialogId = id;
                                         member2.memberId = companionId;
                                         member2.save((err, item) => {// save second member
-                                            if (err) {
-                                                res.send({'error':'An error while creating member2'});
-                                            }else{
-                                                res.send(id);//send id of dialog
-                                            }
+                                            if (err) res.send({'error':'An error while creating member2'});
+                                            else res.send(id);//send id of dialog
                                         });
 
 
@@ -109,34 +104,51 @@ module.exports = function(app, db) {
         let companionDialogs = [];
 
         items.forEach(function(event) {
-            let memberId = event.memberId;
-            let dialogId = event.dialogId;
+            let memberId = event.memberId.toString();
+            let dialogId = event.dialogId.toString();
             console.log('memberId:' + memberId + ' userId:' + userId);
 
             if(companionId === userId){
                 userDialogs.push(dialogId);
                 companionDialogs.push(dialogId);
             }else
-            if(userId == memberId)
+            if(userId.toString() === memberId.toString())
                 userDialogs.push(dialogId);
             else
                 companionDialogs.push(dialogId);
         });
 
-        console.log('Userlist:' + userDialogs);
-        console.log('Companionlist:' + companionDialogs);
+        //console.log('Userlist:' + userDialogs);
+        //console.log('Companionlist:' + companionDialogs);
 
         let intList = intersect(userDialogs, companionDialogs);
-        console.log('IntList:' + intList);
+        //console.log('IntList:' + intList);
         return intList;
     }
 
     function intersect(a, b) {
         const setA = new Set(a);
         const setB = new Set(b);
+
+        /*console.log('a');
+        setA.forEach(function (obj) {
+            console.log(obj);
+        });
+        console.log('b');
+        setB.forEach(function (obj) {
+            console.log(obj);
+        });*/
         const intersection = new Set([...setA].filter(x => setB.has(x)));
         return Array.from(intersection);
     }
+
+
+    function intersect2(a, b) {
+        a = new Set(a), b = new Set(b);
+        return [...a].filter(v => b.has(v));
+    }
+
+
 
 
 };
