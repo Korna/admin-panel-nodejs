@@ -11,18 +11,14 @@ var userSchema = mongoose.Schema({
             type: String,
             unique: true,
             required: true,
-            trim: true
-        },
+            trim: true},
         password: {
             type: String,
-            required: true
-        },
+            required: true},
         admin: {
-            type: Boolean
-        },
+            type: Boolean},
         fcmToken: {
-            type: String
-        },
+            type: String},
         optionsId: {
             type: Schema.ObjectId,
             ref: 'Options' },

@@ -6,8 +6,7 @@ let Options = require('../models/options.js');
 
 
 module.exports = function(app, db) {
-
-    app.get('/api/options/', ctr.isLoggedIn, //ctr.requireAdmin,
+    app.get('/api/options/', ctr.isLoggedIn,
         function(req, res) {
             let userId = req.user.id;
             const details = { '_id': userId };
@@ -25,13 +24,12 @@ module.exports = function(app, db) {
         });
 
 
-    app.post('/api/options/', ctr.isLoggedIn, //ctr.requireAdmin,
+    app.post('/api/options/', ctr.isLoggedIn,
         function(req, res) {
             let userId = req.user.id;
             const req_receiveFcm = req.body.receiveFcm;
 
             console.log('body.receive' + req_receiveFcm);
-
             const model = {
                 $set: {
                     'receiveFcm': req_receiveFcm
@@ -40,7 +38,6 @@ module.exports = function(app, db) {
             const query = {
                 '_id': userId
             };
-
 
             Options.update(query, model, { upsert: true },
                 function(err, data){
@@ -52,6 +49,5 @@ module.exports = function(app, db) {
                     }
                 });
         });
-
 
 };

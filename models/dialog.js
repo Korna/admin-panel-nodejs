@@ -5,7 +5,8 @@ const DialogSchema = new Schema({
     },
     members: [{
         type: Schema.ObjectId,
-        ref: 'Profile' }]
+        ref: 'Profile' }],
+    date: {type: Date}
 
 });
 module.exports =  mongoose.model('Dialog', DialogSchema);

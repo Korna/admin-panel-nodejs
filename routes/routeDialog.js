@@ -60,6 +60,7 @@ module.exports = function(app, db) {
                     let dialog = new Dialog();
                     let id = new ObjectID();
                     dialog._id = id;
+   //TODO check                 dialog.date = Date.now();
 
                     dialog.save(//create dialog
                         (err, createdDialog) => {
@@ -143,10 +144,7 @@ module.exports = function(app, db) {
     }
 
 
-    function intersect2(a, b) {
-        a = new Set(a), b = new Set(b);
-        return [...a].filter(v => b.has(v));
-    }
+
 
 
 

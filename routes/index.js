@@ -33,8 +33,6 @@ router.get('/signup', function(req, res) {
 });
 
 router.get('/profile', ctr.isLoggedIn, function(req, res) {
-  let email = req.user;
- // console.log(req.user);
   res.render('profile.ejs', { user: req.user });
 });
 
