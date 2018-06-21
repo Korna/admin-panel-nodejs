@@ -72,13 +72,13 @@ let routes = require('./routes/index');
 upload = require('./routes/upload')(app, fs, type, path);
 
 
-let sign = require('./routes/routeSign')(app, db);
-let notes = require('./routes/routeNote')(app, db);
-let profile = require('./routes/routeProfile')(app, db);
-let dialog = require('./routes/routeDialog')(app, db);
-let message = require('./routes/routeMessage')(app, db);
-let options = require('./routes/routeOptions')(app, db);
-let userz = require('./routes/routeUser')(app, db);
+let sign = require('./routes/auth/routeSign')(app, db);
+let notes = require('./routes/event/routeNote')(app, db);
+let profile = require('./routes/data/routeProfile')(app, db);
+let dialog = require('./routes/chat/routeDialog')(app, db);
+let message = require('./routes/chat/routeMessage')(app, db);
+let options = require('./routes/data/routeOptions')(app, db);
+let userz = require('./routes/data/routeUser')(app, db);
 
 app.use('/', routes);
 app.use('/users', users);

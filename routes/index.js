@@ -1,10 +1,10 @@
 const express = require('express');
 const passport = require('passport');
+
 const router = express.Router();
 
 
 let ctr = require('../control/middleware.js');
-
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });

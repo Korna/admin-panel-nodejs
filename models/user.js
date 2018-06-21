@@ -1,30 +1,36 @@
-var mongoose = require('mongoose');
-var bcrypt   = require('bcrypt-nodejs');
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt-nodejs');
 
 let Schema = mongoose.Schema;
 
-var userSchema = mongoose.Schema({
-        name: {
-            type: String
-        },
-        email: {
-            type: String,
-            unique: true,
-            required: true,
-            trim: true},
-        password: {
-            type: String,
-            required: true},
-        admin: {
-            type: Boolean},
-        fcmToken: {
-            type: String},
-        optionsId: {
-            type: Schema.ObjectId,
-            ref: 'Options' },
-        profileId: {
-            type: Schema.ObjectId,
-            ref: 'Profile' }
+const userSchema = mongoose.Schema({
+    name: {
+        type: String
+    },
+    email: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    admin: {
+        type: Boolean
+    },
+    fcmToken: {
+        type: String
+    },
+    optionsId: {
+        type: Schema.ObjectId,
+        ref: 'Options'
+    },
+    profileId: {
+        type: Schema.ObjectId,
+        ref: 'Profile'
+    }
 
 });
 
@@ -35,6 +41,9 @@ userSchema.methods.generateHash = function(password) {
 userSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.password);
 };
+
+module.exports = mongoose.model('User', userSchema);
+
 /*
 //hashing a password before saving it to the database
 userSchema.pre('save', function (next) {
@@ -48,6 +57,3 @@ userSchema.pre('save', function (next) {
     })
 });
 */
-
-
-module.exports = mongoose.model('User', userSchema);
