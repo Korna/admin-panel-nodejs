@@ -18,3 +18,5 @@ module.exports.googleauth = (req, res) => {
     req.session.token = req.user.token;
     res.status(200).end();
 };
+
+

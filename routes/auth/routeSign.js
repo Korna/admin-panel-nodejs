@@ -1,20 +1,21 @@
-
 const passport = require('passport');
 const controller = require('./controller.js');
 const tfa = require('./tfa.js');
 const google = require('./google.js');
-let ctr = require('../../control/middleware.js');
+const ctr = require('../../control/middleware.js');
 
 const prefix = '/api/auth/';
 
-module.exports = function(app, db) {
-    app.post(prefix + 'signup', passport.authenticate('local-signup', { session: true }), controller.signup);
-    app.post(prefix + 'signin', passport.authenticate('local-login', { session: true }), controller.signin);
+module.exports = function (app, db) {
+    app.post(prefix + 'signup', passport.authenticate('local-signup', {session: true}), controller.signup);
+    app.post(prefix + 'signin', passport.authenticate('local-login', {session: true}), controller.signin);
 
     app.get('/logout', ctr.isLoggedIn, controller.logout);
-    
-    app.post(prefix + 'google',  passport.authenticate('google'//, { failureRedirect: '/login' }
-    ), controller.googleauth);
+
+    app.post(prefix + 'google', passport.authenticate('google', {scope: ['profile']} //, { failureRedirect: '/login' }
+    ));
+
+    app.post(prefix + 'google/callback', controller.googleauth);
 
     app.post(prefix + 'tfa/create', ctr.isLoggedIn, tfa.create);
     app.post(prefix + 'tfa/active', ctr.isLoggedIn, tfa.active);
