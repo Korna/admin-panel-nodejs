@@ -23,6 +23,12 @@ const userSchema = mongoose.Schema({
     fcmToken: {
         type: String
     },
+    secretTfa: {
+      type: String
+    },
+    tfaOn: {
+        type: Boolean
+    },
     optionsId: {
         type: Schema.ObjectId,
         ref: 'Options'

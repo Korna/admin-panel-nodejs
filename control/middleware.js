@@ -1,5 +1,6 @@
 let User = require('../models/user');
 
+
 module.exports = {
 
     isLoggedIn: function(req, res, next) {
@@ -26,6 +27,17 @@ module.exports = {
             }else
                 next();
         });
+    },
+
+    checkIfItself: function (req, res, next) {
+        let userId = req.user.id.toString();
+        let companionId = req.body.companionId.toString();
+
+        if (companionId === undefined) {
+            res.sendStatus(400).end();
+        } else if (companionId === userId) {//TODO make something like message
+            res.sendStatus(400).end();//cant create dialog with self
+        }
     }
 
 
