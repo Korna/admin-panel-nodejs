@@ -1,9 +1,9 @@
-var LocalStrategy = require('passport-local').Strategy;
-var User = require('../models/user.js');
+const LocalStrategy = require('passport-local').Strategy;
+const User = require('../models/user.js');
 const TwoFAStartegy = require('passport-2fa-totp').Strategy;
 const GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator;
 
-
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 const ObjectID = require('mongodb').ObjectID;
 
@@ -112,6 +112,31 @@ module.exports = function(passport) {
     }));
 
 
+    passport.use(new GoogleStrategy({
+            clientID: '501593929464-und7gbcciv6259n7cc08ums16j0jd99r.apps.googleusercontent.com',
+            clientSecret: '-nzLn-3j0CR_nsW2m48iDJOP',
+            callbackURL: ''
+        },
+        (token, refreshToken, profile, done) => {
+
+            User.findOne({ 'email':  profile.email }, function(err, user) {
+                if (err)
+                    return done(err);
+                if (!user)
+                    return done(null, false, { message: 'No user.' });
+                else
+                    return done(null, user);
+            });
+
+
+
+        console.log(profile);
+
+            return done(null, {
+                profile: profile,
+                token: token
+            });
+        }));
 
 
 };
