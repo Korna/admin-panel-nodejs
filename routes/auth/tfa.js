@@ -33,9 +33,13 @@ module.exports.create = async function create(req, res, next) {
         next(error);
     }
 };
-//TODO
+
 module.exports.active = async function (req, res, next) {
     try {
+        if(req.user.tfaOn === true){
+            next(new Error('Already activated'));
+        }
+
         const verified = await checkUserTfa(req.user.id, req.body.token, req.session.key);
 
         if (verified === true) {
@@ -48,9 +52,13 @@ module.exports.active = async function (req, res, next) {
         next(error);
     }
 };
-//TODO
+
 module.exports.delete = async function (req, res, next) {
     try {
+        if(req.user.tfaOn === false){
+            next(new Error('Already deleted'));
+        }
+
         const verified = await checkUserTfa(req.user.id, req.body.token, req.user.secretTfa);
 
         if (verified === true) {
@@ -130,9 +138,9 @@ function checkUserAuth(email) {
             if (err) {
                 reject(error);
             } else {
-                console.log(user);
+               // console.log(user);
 
-                if (user.tfaOn === true) {
+                if (item !== null && item.tfaOn === true) {
                     resolve(true);
                 } else {
                     resolve(false);

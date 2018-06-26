@@ -4,36 +4,36 @@ const bcrypt = require('bcrypt-nodejs');
 let Schema = mongoose.Schema;
 
 const userSchema = mongoose.Schema({
-    name: {
+    name: {//nickname
         type: String
     },
-    email: {
+    email: {//email
         type: String,
         unique: true,
         required: true,
         trim: true
     },
-    password: {
+    password: {//password
         type: String,
         required: true
     },
-    admin: {
+    admin: {// is admin
         type: Boolean
     },
-    fcmToken: {
+    fcmToken: {// stored fcm token
         type: String
     },
-    secretTfa: {
+    secretTfa: {//secret for tfa auth
       type: String
     },
-    tfaOn: {
+    tfaOn: {//is tfa om
         type: Boolean
     },
-    optionsId: {
+    optionsId: {//userid for populate
         type: Schema.ObjectId,
         ref: 'Options'
     },
-    profileId: {
+    profileId: {//userid for populate
         type: Schema.ObjectId,
         ref: 'Profile'
     }

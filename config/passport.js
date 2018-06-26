@@ -1,5 +1,9 @@
 var LocalStrategy = require('passport-local').Strategy;
-var User = require('../models/user');
+var User = require('../models/user.js');
+const TwoFAStartegy = require('passport-2fa-totp').Strategy;
+const GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator;
+
+
 
 const ObjectID = require('mongodb').ObjectID;
 
@@ -58,11 +62,56 @@ module.exports = function(passport) {
       if (err)
           return done(err);
       if (!user)
-          return done(null, false, req.flash('loginMessage', 'No user found.'));
+          return done(null, false, { message: 'No user.' });
       if (!user.validPassword(password))
-          return done(null, false, req.flash('loginMessage', 'Wrong password.'));
+          return done(null, false, { message: 'Incorrect password.' });
+      if(user.tfaOn === true)
+          return done(null, false, { message: '2fa code required.' });
+
       return done(null, user);
     });
   }));
+
+    passport.use('tfa-user', new TwoFAStartegy({
+        usernameField: 'email',
+        passwordField: 'password',
+        codeField: 'code',
+    }, (email, password, done) => {
+        User.findOne({ 'email':  email }).catch(error =>
+            done(error)).then((user) => {
+            if (!user) {
+              let message = 'incorrect login';
+              console.log(message);
+
+                return done(null, false, {
+                    message: message,
+                });
+            } else
+            if (user.validPassword(password)//((user.password === cryptography.hash(password, user.salt))
+                // && (user.block !== true)
+                && (user.tfaOn === true)) {
+                let message = '2fa enabled and pass is valid';
+                console.log(message);
+                return done(null, user);//{ user, type: 'user' });
+            }
+
+            console.log('incorrect login');
+            return done(null, false, {
+                message: 'incorrect login',
+            });
+        });
+    }, (user, done) => {
+       // console.log(user);
+        if (user.secretTfa) {
+            console.log('decoding');
+            const secret = GoogleAuthenticator.decodeSecret(user.secretTfa);
+            done(null, secret, 30);
+        } else {
+            done(new Error('Google Authenticator is not setup yet.'));
+        }
+    }));
+
+
+
 
 };
