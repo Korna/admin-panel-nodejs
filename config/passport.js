@@ -32,7 +32,7 @@ module.exports = function(passport) {
         if (user) {
           return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
         } else {
-          var newUser = new User();
+          let newUser = new User();
           let id = new ObjectID();
           newUser._id = id;
           newUser.email = email;
@@ -115,7 +115,8 @@ module.exports = function(passport) {
     passport.use(new GoogleStrategy({
             clientID: '501593929464-und7gbcciv6259n7cc08ums16j0jd99r.apps.googleusercontent.com',
             clientSecret: '-nzLn-3j0CR_nsW2m48iDJOP',
-            callbackURL: 'https://app-node-pps.herokuapp.com/api/auth/google/callback'
+          //  callbackURL: 'https://app-node-pps.herokuapp.com/api/auth/google/callback'
+            callbackURL: 'https://127.0.0.1:3000/api/auth/google/callback'
         },
         (token, refreshToken, profile, done) => {
 

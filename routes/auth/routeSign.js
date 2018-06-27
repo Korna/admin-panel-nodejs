@@ -15,6 +15,8 @@ module.exports = function (app, db) {
     app.post(prefix + 'google', passport.authenticate('google', {scope: ['profile']} //, { failureRedirect: '/login' }
     ));
 
+    app.post(prefix + 'google/auth', google.token);
+
     app.post(prefix + 'google/callback', controller.googleauth);
 
     app.post(prefix + 'tfa/create', ctr.isLoggedIn, tfa.create);
