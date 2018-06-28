@@ -7,12 +7,14 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     port = process.env.PORT || 3000,
     passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy,
     MongoClient = require('mongodb').MongoClient,
     mongoose = require('mongoose'),
     flash = require('connect-flash'),
     session = require('express-session'),
     configDB = require('./config/database.js');
+
+let io = require('socket.io').listen(process.env.PORT || 3001);
+
 
 //connect to MongoDB
 mongoose.connect(configDB.url);
@@ -86,14 +88,65 @@ app.use('/users', users);
 //app.use('/note_routes', notes)(app, db);
 
 
+// socket io
+/*
+io.configure('production', function(){
+    io.enable('browser client etag');
+    io.set('log level', 1);
+
+    io.set('transports', [
+        'websocket',
+        'flashsocket',
+        'htmlfile',
+        'xhr-polling',
+        'jsonp-polling',
+    ]);
+});
+
+io.configure('development', function(){
+    io.set('transports', ['websocket']);
+});
+*/
+
+io.sockets.on('connection', function(client){
+    let userName;
+    console.log("user connected!");
+    client.emit('message', 'please insert user name');
+
+    client.on('message', function(message){
+        if (!userName) {
+            userName = message;
+            console.log(userName + ' is connected :)');
+            client.emit('message', 'Welcome ' + userName);
+            client.broadcast.emit('message', userName + ' is connected');
+        }
+        else {
+            client.emit('message', 'me: ' + message);
+            client.broadcast.emit('message', userName + ' says: ' + message);
+        }
+    });
+
+    client.on('disconnect', function() {
+        if (userName) {
+            console.log(userName + " left");
+            client.broadcast.emit('message', userName + ' left us :(');
+        }
+        else {
+            console.log("anonymous left");
+        }
+    });
+});
+
+
+// mongoose
 MongoClient.connect(configDB.url, (err, database) => {
+    if (err)
+        return console.log(err);
     try{
-        var db = database.db('dbtest');
+        const db = database.db('dbtest');
     }catch (t){
         console.log(t);
     }
-    if (err)
-        return console.log(err);
 
     //require('./routes/note_routes')(app, db);
     // router.use('/note_routes', notes)(app, db);
