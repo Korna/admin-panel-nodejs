@@ -11,7 +11,8 @@ const express = require('express'),
     mongoose = require('mongoose'),
     flash = require('connect-flash'),
     session = require('express-session'),
-    configDB = require('./config/database.js');
+    configDB = require('./config/database.js'),
+    initSocket = require('./routes/socketChat.js');
 
 
 let server = app.listen(port, () => {
@@ -89,7 +90,9 @@ require('./config/passport')(passport);
 
 
 let users = require('./routes/users');
-let routes = require('./routes/index');
+let routes = require('./routes/pages.js');
+app.use('/', routes);
+app.use('/users', users);
 
 upload = require('./routes/upload')(app, fs, type, path);
 
@@ -102,8 +105,7 @@ let message = require('./routes/chat/routeMessage')(app, db);
 let options = require('./routes/data/routeOptions')(app, db);
 let userz = require('./routes/data/routeUser')(app, db);
 
-app.use('/', routes);
-app.use('/users', users);
+
 //app.use('/', profile);
 //app.use('/note_routes', notes)(app, db);
 
@@ -128,36 +130,8 @@ io.configure('development', function(){
 });
 */
 
-io.sockets.on('connection', function(client){
-    let userName;
-    console.log("user connected!");
-    client.emit('message', 'please insert user name');
 
-    client.on('message', function(message){
-        if (!userName) {
-            userName = message;
-            console.log(userName + ' is connected :)');
-            client.emit('message', 'Welcome ' + userName);
-            client.broadcast.emit('message', userName + ' is connected');
-        }
-        else {
-            client.emit('message', 'me: ' + message);
-            client.broadcast.emit('message', userName + ' says: ' + message);
-        }
-    });
-
-    client.on('disconnect', function() {
-        if (userName) {
-            console.log(userName + " left");
-            client.broadcast.emit('message', userName + ' left us :(');
-        }
-        else {
-            console.log("anonymous left");
-        }
-    });
-});
-
-
+initSocket(io);
 
 
 
