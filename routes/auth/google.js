@@ -19,7 +19,7 @@ async function verify(token, done, client, res, req) {
     req.body.email = email;
     req.body.password = 'saltsaltsaltsalt';
 
-        User.findOne({ 'email':  email }).catch(error =>
+    User.findOne({'email': email}).catch(error =>
         done(error)).then((user) => {//  [userid, payload.name, payload.email]
 
 
@@ -33,13 +33,13 @@ async function verify(token, done, client, res, req) {
             newUser.optionsId = id;
             newUser.profileId = id;
 
-            newUser.save(function(err) {
+            newUser.save(function (err) {
                 console.log('new user');
                 if (err)
                     throw err;
                 return done(null, newUser);
             });
-        }else{
+        } else {
             console.log('existing user');
             return done(null, user);
         }
@@ -49,9 +49,9 @@ async function verify(token, done, client, res, req) {
 }
 
 module.exports = {
-    handleToken: function(passport) {
-        return function(req, res, next) {
-            passport.authenticate('token', function(err, user, info) {
+    handleToken: function (passport) {
+        return function (req, res, next) {
+            passport.authenticate('token', function (err, user, info) {
                 if (err) {
                     return next(err);
                 }

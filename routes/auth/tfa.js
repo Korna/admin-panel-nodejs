@@ -36,7 +36,7 @@ module.exports.create = async function create(req, res, next) {
 
 module.exports.active = async function (req, res, next) {
     try {
-        if(req.user.tfaOn === true){
+        if (req.user.tfaOn === true) {
             next(new Error('Already activated'));
         }
 
@@ -55,7 +55,7 @@ module.exports.active = async function (req, res, next) {
 
 module.exports.delete = async function (req, res, next) {
     try {
-        if(req.user.tfaOn === false){
+        if (req.user.tfaOn === false) {
             next(new Error('Already deleted'));
         }
 
@@ -138,7 +138,7 @@ function checkUserAuth(email) {
             if (err) {
                 reject(error);
             } else {
-               // console.log(user);
+                // console.log(user);
 
                 if (item !== null && item.tfaOn === true) {
                     resolve(true);

@@ -9,15 +9,15 @@ let Event = require('../../models/event.js');
 let EventMember = require('../../models/eventMember.js');
 
 
-module.exports.optionsGet = function(req, res) {
+module.exports.optionsGet = function (req, res) {
     let userId = req.user.id;
-    const details = { '_id': userId };
+    const details = {'_id': userId};
 
     Options.findOne(details, (err, item) => {
         if (err) {
-            res.send({'error':'An error has occurred'});
+            res.send({'error': 'An error has occurred'});
         } else {
-            if(item != undefined)
+            if (item != undefined)
                 res.send(item);
             else
                 res.status(501).end();
@@ -25,7 +25,7 @@ module.exports.optionsGet = function(req, res) {
     });
 };
 
-module.exports.optionsUpsert = function(req, res) {
+module.exports.optionsUpsert = function (req, res) {
     let userId = req.user.id;
     const req_receiveFcm = req.body.receiveFcm;
 
@@ -37,11 +37,11 @@ module.exports.optionsUpsert = function(req, res) {
     };
     const query = {'_id': userId};
 
-    Options.update(query, model, { upsert: true },
-        function(err, data){
-            if (err){
+    Options.update(query, model, {upsert: true},
+        function (err, data) {
+            if (err) {
                 console.log(err);
-            }else{
+            } else {
                 console.log('created');
                 res.send(data);
             }
@@ -49,18 +49,18 @@ module.exports.optionsUpsert = function(req, res) {
 };
 
 
-module.exports.profileGet = function(req, res) {
+module.exports.profileGet = function (req, res) {
     let userId = req.user.id;
     // const req = req.params.email; // :email
 
 
-    const details = { '_id': userId };
+    const details = {'_id': userId};
 
     Profile.findOne(details, (err, item) => {
         if (err) {
-            res.send({'error':'An error has occurred'});
+            res.send({'error': 'An error has occurred'});
         } else {
-            if(item != undefined)
+            if (item != undefined)
                 res.send(item);
             else
                 res.status(501).end();
@@ -70,7 +70,7 @@ module.exports.profileGet = function(req, res) {
     // Profile.
 };
 
-module.exports.profileUpsert = function(req, res) {
+module.exports.profileUpsert = function (req, res) {
     let userId = req.user.id;
 
     const req_email = req.user.email;
@@ -80,7 +80,6 @@ module.exports.profileUpsert = function(req, res) {
     const req_image = req.body.image;
 
 
-
     var profileModel = {
         $set: {
 
@@ -88,8 +87,9 @@ module.exports.profileUpsert = function(req, res) {
             'username': req_username,
             'city': req_city,
             'description': req_description,
-            'image' : req_image
-        } };
+            'image': req_image
+        }
+    };
 
     profileModel.email = req.user.email;
 
@@ -98,69 +98,68 @@ module.exports.profileUpsert = function(req, res) {
     };
 
 
-
     Profile.update(query, profileModel, {upsert: true},
-        function(err, data){
-            if (err){
+        function (err, data) {
+            if (err) {
                 console.log(err);
-            }else{
+            } else {
                 console.log('created');
                 res.send(data);
             }
         });
 };
 
-module.exports.fcmUpsert = function(req, res) {
+module.exports.fcmUpsert = function (req, res) {
     // const req = req.params.email; // :email
     let userId = req.user.id;
     const fcmToken = req.body.fcmToken;
 
 
-    var query = { '_id': userId };
-    var newvalues = { $set: {'fcmToken': fcmToken } };
+    var query = {'_id': userId};
+    var newvalues = {$set: {'fcmToken': fcmToken}};
 
     User.updateOne(query, newvalues, (err, item) => {//TODO maybe updateOne is incorrect and we should use update
         if (err) {
-            res.send({'error':'An error has occurred'});
+            res.send({'error': 'An error has occurred'});
         } else {
             res.send(item);
         }
     });
 };
 
-module.exports.userCreate = function(req, res) {
+module.exports.userCreate = function (req, res) {
 
     User.find({})
         .populate('profileId')
-        .exec(function(err, items) {
+        .exec(function (err, items) {
             if (err) {
                 res.send({'error': 'An error has occurred'});
-            }else
+            } else
                 res.send(items);
         });
 };
 
-module.exports.userDelete = function(req, res) {
+module.exports.userDelete = function (req, res) {
     const id = req.params.id;
-    const query = { '_id': new ObjectID(id) };
+    const query = {'_id': new ObjectID(id)};
 
     console.log('req.id' + req.params.id);
 
     User.remove(query, (err, item) => {
         if (err) {
-            res.send({'error':'An error has occurred'});
+            res.send({'error': 'An error has occurred'});
         } else {
 
-            const subquery1 = { 'authorId': new ObjectID(id) };
+            const subquery1 = {'authorId': new ObjectID(id)};
 
             Event.remove(subquery1, (err, item) => {
                 if (err)
-                    res.send({'error':'An error has occurred'});
+                    res.send({'error': 'An error has occurred'});
                 else {
-                    const subquery2 = { 'memberId': new ObjectID(id) };
+                    const subquery2 = {'memberId': new ObjectID(id)};
                     EventMember.remove(subquery2, (err, item) => {
                         if (err) {
-                            res.send({'error':'An error has occurred'});
+                            res.send({'error': 'An error has occurred'});
                         } else {
                             res.send('Cleared user and his events!');
 

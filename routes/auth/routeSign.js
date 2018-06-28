@@ -18,8 +18,8 @@ module.exports = function (app, db) {
 
     app.post(prefix + 'google/auth',
         google.token,
-       // google.handleToken(passport),
-       // passport.authenticate('local-passwordless'),
+        // google.handleToken(passport),
+        // passport.authenticate('local-passwordless'),
         passport.authenticate('local-login', {session: true}),
         controller.signin);
 

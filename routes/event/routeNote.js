@@ -1,6 +1,4 @@
-
 let ctr = require('../../control/middleware.js');
-
 
 
 const prefix = '/api/event/';
@@ -8,7 +6,7 @@ const prefix = '/api/event/';
 const controller = require('./controller.js');
 
 
-module.exports = function(app, db) {
+module.exports = function (app, db) {
 
     //all events
     app.get(prefix + 'list/', ctr.isLoggedIn, controller.eventList);

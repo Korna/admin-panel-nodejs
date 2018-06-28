@@ -7,24 +7,24 @@ admin.initializeApp({
 
 
 module.exports = {
-    sendToDevice: function (receiver, title, body){
-    const payload = {
-        notification: {
-            title: title,
-            body: body
-        },
-    };
+    sendToDevice: function (receiver, title, body) {
+        const payload = {
+            notification: {
+                title: title,
+                body: body
+            },
+        };
 
-    admin.messaging().sendToDevice(receiver, payload)
-        .then((response) => {
-            console.log('Successfully sent message:', response);
-        })
-        .catch((error) => {
-            console.log('Error sending message:', error);
-        });
+        admin.messaging().sendToDevice(receiver, payload)
+            .then((response) => {
+                console.log('Successfully sent message:', response);
+            })
+            .catch((error) => {
+                console.log('Error sending message:', error);
+            });
 
     },
-    sendToTopic: function(topic, title, body){
+    sendToTopic: function (topic, title, body) {
         const payload = {
             notification: {
                 title: title,

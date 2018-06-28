@@ -5,10 +5,9 @@ const prefix = '/api/data/';
 
 const controller = require('./controller.js');
 
-module.exports = function(app, db) {
+module.exports = function (app, db) {
     app.get(prefix + 'options/', ctr.isLoggedIn, controller.optionsGet);
     app.post(prefix + 'options/', ctr.isLoggedIn, controller.optionsUpsert);
-
 
 
 };
