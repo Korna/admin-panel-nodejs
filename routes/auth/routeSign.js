@@ -12,12 +12,24 @@ module.exports = function (app, db) {
 
     app.get('/logout', ctr.isLoggedIn, controller.logout);
 
-    app.post(prefix + 'google', passport.authenticate('google', {scope: ['profile']} //, { failureRedirect: '/login' }
-    ));
 
-    app.post(prefix + 'google/auth', google.token);
+    //app.post(prefix + 'google/auth', passport.authenticate('google', {scope: ['profile']}), google.token);
+    //app.post(prefix + 'google/callback', controller.googleauth);
 
-    app.post(prefix + 'google/callback', controller.googleauth);
+    app.post(prefix + 'google/auth',
+        google.token,
+       // google.handleToken(passport),
+       // passport.authenticate('local-passwordless'),
+        passport.authenticate('local-login', {session: true}),
+        controller.signin);
+
+    app.post(prefix + '/auth/google/token',
+        google.token,
+        google.handleToken(passport),
+        passport.authenticate('local-passwordless'),
+        controller.signin
+    );
+
 
     app.post(prefix + 'tfa/create', ctr.isLoggedIn, tfa.create);
     app.post(prefix + 'tfa/active', ctr.isLoggedIn, tfa.active);

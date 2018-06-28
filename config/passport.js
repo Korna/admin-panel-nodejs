@@ -2,6 +2,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/user.js');
 const TwoFAStartegy = require('passport-2fa-totp').Strategy;
 const GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator;
+const CustomStrategy = require('passport-custom').Strategy;
+
 
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
@@ -63,8 +65,10 @@ module.exports = function(passport) {
           return done(err);
       if (!user)
           return done(null, false, { message: 'No user.' });
-      if (!user.validPassword(password))
+      if (!user.validPassword(password)){
           return done(null, false, { message: 'Incorrect password.' });
+      }
+
       if(user.tfaOn === true)
           return done(null, false, { message: '2fa code required.' });
 
@@ -111,14 +115,59 @@ module.exports = function(passport) {
         }
     }));
 
+    passport.use(
+        'local-passwordless',
+        new LocalStrategy({// by default, local strategy uses username and password, we will override with email
+                usernameField: 'email',
+                passwordField: 'email',
+                passReqToCallback: true // allows us to pass back the entire request to the callback
+            },
+            function(req, email, password, done) {
+                console.log('loggg');
+                User.findOne({ 'email':  email }, function(err, user) {
+                    if (err)
+                        return done(err, false, err);
+                    if (user) {
+                        return done(null, user);
+                    }
 
-    passport.use(new GoogleStrategy({
+                    return done(null, false, err);
+                });
+
+
+            }
+        )
+    );
+
+
+    passport.use(//TODO sads
+        'token', new CustomStrategy(function(req, cb) {
+            db.query(
+                'SELECT id, first_name, email, last_name FROM app_users WHERE id=$1',
+                [req.body.tokenized],
+                (err, userData) => {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    if (!userData.rows[0]) {
+                        return cb({ error: 'No user after token' });
+                    }
+
+                    req.body.email = userData.rows[0].email;
+                    return cb(null, userData.rows[0]);
+                }
+            );
+        })
+    );
+
+
+    passport.use(new GoogleStrategy({// worthless strategy for web
             clientID: '501593929464-und7gbcciv6259n7cc08ums16j0jd99r.apps.googleusercontent.com',
             clientSecret: '-nzLn-3j0CR_nsW2m48iDJOP',
           //  callbackURL: 'https://app-node-pps.herokuapp.com/api/auth/google/callback'
             callbackURL: 'https://127.0.0.1:3000/api/auth/google/callback'
-        },
-        (token, refreshToken, profile, done) => {
+        }, (token, refreshToken, profile, done) => {
 
             User.findOne({ 'email':  profile.email }, function(err, user) {
                 if (err)
@@ -128,8 +177,6 @@ module.exports = function(passport) {
                 else
                     return done(null, user);
             });
-
-
 
         console.log(profile);
 
