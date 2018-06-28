@@ -13,18 +13,38 @@ const express = require('express'),
     session = require('express-session'),
     configDB = require('./config/database.js');
 
-let io = require('socket.io').listen(process.env.PORT || 3001);
+
+let server = app.listen(port, () => {
+    console.log('Server is listening at:' + port);
+});
+
+//let io = require('socket.io').listen(process.env.PORT || 3001);
+let io = require('socket.io')(server);
 
 
 //connect to MongoDB
 mongoose.connect(configDB.url);
 const db = mongoose.connection;
-
 //handle mongo error
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    console.log('Connect');
+    console.log('Db Connect');
 });
+
+MongoClient.connect(configDB.url, (err, database) => {
+    if (err)
+        return console.log(err);
+    try{
+        const db = database.db('dbtest');
+    }catch (t){
+        console.log(t);
+    }
+
+    //require('./routes/note_routes')(app, db);
+    // router.use('/note_routes', notes)(app, db);
+    console.log('MongoClient connected');
+});
+
 
 
 
@@ -138,28 +158,8 @@ io.sockets.on('connection', function(client){
 });
 
 
-// mongoose
-MongoClient.connect(configDB.url, (err, database) => {
-    if (err)
-        return console.log(err);
-    try{
-        const db = database.db('dbtest');
-    }catch (t){
-        console.log(t);
-    }
-
-    //require('./routes/note_routes')(app, db);
-    // router.use('/note_routes', notes)(app, db);
-    try{
-        app.listen(port, () => {
-            console.log('MongoClient connected. We are live on: ' + port);
-        });
-    }catch (t){
-        console.log(t);
-    }
 
 
-});
 
 app.use(function(req, res, next) {
     const err = new Error('Not Found');
