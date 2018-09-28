@@ -17,10 +17,13 @@ module.exports.optionsGet = function (req, res) {
         if (err) {
             res.send({'error': 'An error has occurred'});
         } else {
-            if (item != undefined)
+            if (item != undefined)//item found
                 res.send(item);
-            else
-                res.status(501).end();
+            else{
+                res.send(new Options());
+
+            }
+
         }
     });
 };
@@ -60,14 +63,16 @@ module.exports.profileGet = function (req, res) {
         if (err) {
             res.send({'error': 'An error has occurred'});
         } else {
-            if (item != undefined)
+            if (item != undefined)//item found
                 res.send(item);
-            else
-                res.status(501).end();
+            else{
+                res.send(new Profile());
+               // res.status(501).end();
+            }
+
         }
     });
 
-    // Profile.
 };
 
 module.exports.profileUpsert = function (req, res) {
