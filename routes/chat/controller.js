@@ -47,17 +47,19 @@ module.exports.messageSend = function (req, res) {
 
             const query = {'dialogId': dialogId};
 
+            //найти всех участников диалога
             DialogMember.find(query)//.populate('memberId')
                 .exec((err, dialogs) => {
                     if (err) {
                         res.send({'error': 'An error has occurred'});
                     } else {
 
-                        let idList = [];
+                        let idList = [];//массив участников
                         dialogs.forEach(function (item) {
                             idList.push(item.memberId);
 
                         });
+                        //по id находим участника и проверяем, отправлять ли ему пуши
                         User.find({'_id': {$in: idList}})
                             .populate('optionsId')
                             .exec((err, users) => {
@@ -65,11 +67,12 @@ module.exports.messageSend = function (req, res) {
                                     let token = user.fcmToken;
 
                                     let receiverId = user.id;
-                                    if (user.optionsId == null || user.optionsId.receiveFcm == true)
-                                        if (senderId !== receiverId)
+                                    if (user.optionsId == null ||
+                                        user.optionsId.receiveFcm == true)
+                                        if (senderId !== receiverId)//не отправлять отправителю пуши
                                             fcm.sendToDevice(token, 'New message', text);
 
-                                    console.log(user);
+                                   // console.log(user);
                                 })
 
 
@@ -80,6 +83,9 @@ module.exports.messageSend = function (req, res) {
 
         }
     });
+
+
+
 };
 
 
@@ -117,11 +123,12 @@ module.exports.dialogCreate = function (req, res) {
     list.push(companionId);
 
     const query = {'memberId': {$in: list}};
-
+    console.log('list:' + list);
     ChatMember.find(query).exec(function (err, items) {
         let intList = getIntersect(items, companionId, userId);
 
         if (intList.length === 0) {
+            console.log('creating dialog');
             let dialog = new Dialog();
             let id = new ObjectID();
             dialog._id = id;

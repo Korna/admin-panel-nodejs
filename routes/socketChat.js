@@ -15,7 +15,18 @@ redisClient.on('error', function(err){
 });
 */
 
+let Message = require('../models/message.js');
+let Dialog = require('../models/dialog.js');
+let ChatMember = require('../models/dialogMember.js');
+let DialogMember = require('../models/dialogMember.js');
+let User = require('../models/user.js');
 
+let fcm = require('../control/fcm.js');
+
+/**
+ * отправка в null thread вызывает ошибки у клиентов
+ * @param io
+ */
 module.exports = function (io) {
 
     io.sockets.on('connection', function(client){
@@ -24,15 +35,24 @@ module.exports = function (io) {
         client.emit(THREAD_MESSAGE, 'please insert username');
 
         client.on(THREAD_MESSAGE, function(message){
-            if (!userName) {
-                userName = message;
-                console.log(userName + ' is connected :)');
-                client.emit(THREAD_MESSAGE, 'Welcome ' + userName);
-                client.broadcast.emit(THREAD_MESSAGE, userName + ' is connected');
-            } else {
-                client.emit(THREAD_MESSAGE, 'me: ' + message);
-                client.broadcast.emit(THREAD_MESSAGE, userName + ' says: ' + message);
+
+
+            let messageObject = JSON.parse(message);
+
+            let dialogId = messageObject.dialogId;
+            let text = messageObject.text;
+            let senderId = messageObject.senderId;
+            if(dialogId != null){
+                console.log('message received on topic. dialogId is ' + dialogId);
+                //client.emit(dialogId, message);
+                //client.broadcast.emit(dialogId, message);
+
+                sendAnswer(client, dialogId, text, senderId);
+            }else{
+                console.log('on thread:' + THREAD_MESSAGE + ' ' + 'dialogId is null')
             }
+
+
         });
 
         client.on(THREAD_TYPING, function(){
@@ -41,7 +61,7 @@ module.exports = function (io) {
 
            // client.broadcast.emit(THREAD_TYPING, true);
 
-            io.sockets.connected[socketid].emit();
+           // io.sockets.connected[socketid].emit();
         });
 
         client.on('disconnect', function() {
@@ -52,6 +72,72 @@ module.exports = function (io) {
             else
                 console.log("anonymous left");
         });
+
     });
 
+
+    function sendAnswer(client, dialogId, text, senderId) {
+        const message = new Message();
+        message.dialogId = dialogId;
+        message.senderId = senderId;
+        message.text = text;
+        message.timeSent = Date.now();
+        //   console.log('userId' + req.user.id);
+
+        message.save((err, result) => {
+            if (err) {
+              //  res.send({'error': 'An error has occurred'});
+            } else {
+                //   console.log(result);
+               // res.send(result);
+
+                client.emit(dialogId, result);//to sender
+                client.broadcast.emit(dialogId, result);// to all except sender
+
+
+                const query = {'dialogId': dialogId};
+                sendFcmToAllParticipants(query, senderId)
+            }
+        });
+    }
+
+    function sendFcmToAllParticipants(query, senderId) {
+
+        //найти всех участников диалога
+        DialogMember.find(query)//.populate('memberId')
+            .exec((err, dialogs) => {
+                if (err) {
+                    res.send({'error': 'An error has occurred'});
+                } else {
+
+                    let idList = [];//массив участников
+                    dialogs.forEach(function (item) {
+                        idList.push(item.memberId);
+
+                    });
+                    //по id находим участника и проверяем, отправлять ли ему пуши
+                    User.find({'_id': {$in: idList}})
+                        .populate('optionsId')
+                        .exec((err, users) => {
+                            users.forEach(function (user) {
+                                let token = user.fcmToken;
+
+                                let receiverId = user.id;
+                                if (user.optionsId == null ||
+                                    user.optionsId.receiveFcm == true)
+                                    if (senderId !== receiverId)//не отправлять отправителю пуши
+                                        fcm.sendToDevice(token, 'New message', text);
+
+                                // console.log(user);
+                            })
+
+
+                        });
+
+                }
+            });
+
+    }
+
 };
+

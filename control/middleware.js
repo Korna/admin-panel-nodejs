@@ -34,10 +34,13 @@ module.exports = {
         let companionId = req.body.companionId.toString();
 
         if (companionId === undefined) {
+            console.log('companion:' + companionId);
             res.sendStatus(400).end();
         } else if (companionId === userId) {//TODO make something like message
+            console.log('companion is himself');
             res.sendStatus(400).end();//cant create dialog with self
-        }
+        }else
+            return next();
     }
 
 

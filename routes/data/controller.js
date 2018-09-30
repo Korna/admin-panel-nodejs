@@ -87,7 +87,6 @@ module.exports.profileUpsert = function (req, res) {
 
     var profileModel = {
         $set: {
-
             'email': req_email,
             'username': req_username,
             'city': req_city,
@@ -136,11 +135,11 @@ module.exports.userCreate = function (req, res) {
 
     User.find({})
         .populate('profileId')
-        .exec(function (err, items) {
+        .exec(function (err, item) {
             if (err) {
                 res.send({'error': 'An error has occurred'});
             } else
-                res.send(items);
+                res.send(item);
         });
 };
 
