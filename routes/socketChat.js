@@ -1,5 +1,5 @@
 const THREAD_MESSAGE = 'message';
-const THREAD_TYPING = 'typing';
+const THREAD_TYPING = 'event_typing';
 
 /*
 let redis = require("redis");
@@ -34,8 +34,9 @@ module.exports = function (io) {
         console.log("user connected!");
         client.emit(THREAD_MESSAGE, 'please insert username');
 
-        client.on(THREAD_MESSAGE, function(message){
 
+        //обработка событий сообщений
+        client.on(THREAD_MESSAGE, function(message){
 
             let messageObject = JSON.parse(message);
 
@@ -54,16 +55,23 @@ module.exports = function (io) {
 
 
         });
-
-        client.on(THREAD_TYPING, function(){
+        //обработка событий печатания текста
+        client.on(THREAD_TYPING, function(status){
             console.log(userName + ' is typing');
-            client.emit(THREAD_MESSAGE, 'You are typing');
+           // client.emit(THREAD_TYPING, 'You are typing');
+
+            let messageObject = JSON.parse(status);
+            if(messageObject === true ||
+                messageObject === false)
+                client.broadcast.emit(THREAD_TYPING, status);// to all except sender
+            else
+                console.log('incorrect message on ' + THREAD_TYPING)
 
            // client.broadcast.emit(THREAD_TYPING, true);
 
            // io.sockets.connected[socketid].emit();
         });
-
+        //обработка отключения от сокета
         client.on('disconnect', function() {
             if (userName) {
                 console.log(userName + " left");
