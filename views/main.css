@@ -1,0 +1,18 @@
+.navbar {
+    background-color: #F8F8F8;
+    border-color: #708090;
+}
+.navbar-toggle, .icon-bar {
+    border:1px solid orange;
+}
+
+
+body {
+    padding-top: 0px;
+    background-color: white;
+}
+
+
+.fa-sign-out {
+    float: right;
+}
