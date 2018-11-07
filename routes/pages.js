@@ -5,8 +5,16 @@ const router = express.Router();
 
 
 let ctr = require('../control/middleware.js');
-router.get('/', function (req, res, next) {
+router.get('/', ctr.isLoggedIn, function (req, res, next) {
     res.render('index', {title: 'Express'});
+});
+
+router.get('/contact', function (req, res, next) {
+    res.render('contact.ejs', {message: req.flash('loginMessage')});
+});
+
+router.get('/about', function (req, res, next) {
+    res.render('about.ejs', {message: req.flash('loginMessage')});
 });
 
 router.get('/login', function (req, res, next) {

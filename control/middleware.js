@@ -3,6 +3,15 @@ let User = require('../models/user');
 
 module.exports = {
 
+    requestAuth: function (req, res, next) {
+        if (req.isAuthenticated())
+            return next();
+        else {
+            res.status(403);
+            res.render('requestAuth.ejs', {message: req.flash('loginMessage')});
+        }
+    },
+
     isLoggedIn: function (req, res, next) {
         console.log('Authenticated:' + req.isAuthenticated());
         // console.log('User:' + req.user.body);
@@ -11,7 +20,7 @@ module.exports = {
             return next();
         else {
             res.status(403);
-            res.send({'error': 'You are not authenticated'});
+            res.render('requestAuth.ejs', {message: req.flash('loginMessage')});
         }
     },
 

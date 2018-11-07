@@ -1,38 +1,117 @@
 <% include partials/head %>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body onload="loadAllNotes()">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+    function getUrl() {
+        var url = window.location.href
+        var arr = url.split("/");
+        var result = arr[0] + "//" + arr[2]
+        return result;
+    }
 
-  <body>
+    function loadAllNotes() {
+
+        var url = getUrl() + '/api/data/profile';
+
+        fetch(url, {
+            credentials: "same-origin"
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            data.username = " sd"
+            console.log(data)
+            move(convertToPercent(data));
+
+            let image = document.getElementById("profileImage");
+            if(data.image === undefined || data.image == null)
+                image.src = "https://www.weact.org/wp-content/uploads/2016/10/Blank-profile.png"
+            else{
+                image.src = data.image;
+            }
+
+
+        }).catch(function () {
+            console.log('error');
+        });
+    }
+    function convertToPercent(profile){
+        var percentFill = 100;
+        if(profile.image == null)
+            percentFill -= 25;
+        if(profile.username == null)
+            percentFill -= 25;
+        if(profile.description == null)
+            percentFill -= 25;
+        if(profile.city == null)
+            percentFill -= 25;
+        return percentFill;
+    }
+
+
+
+    function move(value) {// must be <=100
+        var elem = document.getElementById("myBar");
+        var width = 100;
+        var id = setInterval(frame, 10);
+
+        function frame() {
+            if (width <= value) {
+                clearInterval(id);
+            } else {
+                width--;
+                elem.style.width = width + '%';
+                document.getElementById("demo").innerHTML = width * 1 + '%';
+            }
+        }
+    }
+
+</script>
+
+<aside>
+
+
     <div class="col-sm-8 col-sm-offset-2">
-      <div class="text-center">
-        <h1 class=" fa fa-user"> Профиль</h1><br>
-        <span><strong>user id</strong>: <%= user._id ? user._id : '' %></span><br>
-        <span class="fa fa-sign-out"><a href="/"> Sign out</a></span>
-        <hr>
-        <div class="jumbotron">
-          <% if (user.email != null) { %>
+        <div class="text-center">
 
-            <strong>email</strong>: <%= user.email %><br>
-          <% } %>
+            <img id="profileImage" style="max-width:75px;" src="https://www.weact.org/wp-content/uploads/2016/10/Blank-profile.png">
+
+            <span><strong>user id</strong>: <%= user._id ? user._id : '' %></span><br>
+            <hr>
+            <span class="fa fa-sign-out"><a href="/"> Sign out</a></span>
+            <hr>
+            <div id="myBar" class="w3-container w3-green" style="height:24px;width:100%"></div>
+            <p>Profile fill</p>
+            <p id="demo">100%</p>
+
+            <hr>
+            <div class="jumbotron">
+                <% if (user.email != null) { %>
+                <strong>email</strong>: <%= user.email %><br>
+                <% } %>
+            </div>
+
+
         </div>
-
         <form action="/list" method="get">
-        <div>
-          <input type="submit" class="form-control" value="События" />
-        </div>
+            <div>
+                <input type="submit" class="form-control" value="Events"/>
+            </div>
         </form>
         <form action="/notes" method="get">
-          <div>
-            <input type="submit" class="form-control" value="Создать событие" />
-          </div>
+            <div>
+                <input type="submit" class="form-control" value="Create an event"/>
+            </div>
         </form>
 
         <form action="/users" method="get">
-          <div>
-            <input type="submit" class="form-control" value="Пользователи" />
-          </div>
+            <div>
+                <input type="submit" class="form-control" value="Пользователи"/>
+            </div>
         </form>
 
 
-      </div>
+        <% include partials/foot %>
     </div>
-  </body>
-</html>
+    </div>
+</aside>

@@ -6,11 +6,23 @@
     border:1px solid orange;
 }
 
+progress {
+    background-color: #f3f3f3;
+    border: 0;
+    height: 18px;
+    border-radius: 9px;
+}
 
 body {
     padding-top: 0px;
     background-color: white;
 }
+/*
+img {
+    background: url(resources/loading.gif) 50% no-repeat;
+    border: 1px solid black;
+    border-radius: 5px;
+}*/
 
 
 .fa-sign-out {
