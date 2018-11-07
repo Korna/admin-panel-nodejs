@@ -74,6 +74,9 @@ module.exports.eventList = function (req, res) {
 
     Event.find(query).populate('authorId')
         .exec(function (err, items) {
+
+            console.log(items);
+
             res.send(items);
         });
 };

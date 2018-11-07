@@ -34,8 +34,10 @@ module.exports = function (io) {
         console.log("user connected!");
         client.emit(THREAD_MESSAGE, 'please insert username');
 
+        /**
+         * обработка событий сообщений
+         */
 
-        //обработка событий сообщений
         client.on(THREAD_MESSAGE, function(message){
 
             let messageObject = JSON.parse(message);
@@ -55,7 +57,9 @@ module.exports = function (io) {
 
 
         });
-        //обработка событий печатания текста
+        /**
+         * обработка событий печатания текста
+         */
         client.on(THREAD_TYPING, function(status){
             console.log(userName + ' is typing');
            // client.emit(THREAD_TYPING, 'You are typing');
@@ -69,9 +73,11 @@ module.exports = function (io) {
 
            // client.broadcast.emit(THREAD_TYPING, true);
 
-           // io.sockets.connected[socketid].emit();
+
         });
-        //обработка отключения от сокета
+        /**
+         * обработка отключения от сокета
+         */
         client.on('disconnect', function() {
             if (userName) {
                 console.log(userName + " left");
@@ -88,7 +94,7 @@ module.exports = function (io) {
         const message = new Message();
         message.dialogId = dialogId;
         message.senderId = senderId;
-        message.text = text;
+       // message.text = text;
         message.timeSent = Date.now();
         //   console.log('userId' + req.user.id);
 

@@ -24,7 +24,7 @@ let io = require('socket.io')(server);
 
 
 //connect to MongoDB
-mongoose.connect(configDB.url);
+mongoose.connect(configDB.mongoUrl);
 const db = mongoose.connection;
 //handle mongo error
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -32,7 +32,7 @@ db.once('open', function () {
     console.log('Db Connect');
 });
 
-MongoClient.connect(configDB.url, (err, database) => {
+MongoClient.connect(configDB.mongoUrl, (err, database) => {
     if (err)
         return console.log(err);
     try{
@@ -68,7 +68,7 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(express.static('views'));
 
 //session
 app.use(session({
