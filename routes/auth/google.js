@@ -1,7 +1,7 @@
 //id
 //  501593929464-und7gbcciv6259n7cc08ums16j0jd99r.apps.googleusercontent.com
 let User = require('../../models/user.js');
-const googleClientId = '501593929464-und7gbcciv6259n7cc08ums16j0jd99r.apps.googleusercontent.com';
+const googleClientId = '501593929464-6u2jommkfq7damdcfk0vmc5bggru4hsu.apps.googleusercontent.com';
 const ObjectID = require('mongodb').ObjectID;
 
 //secret
