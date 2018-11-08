@@ -1,6 +1,9 @@
 {
   "name": "express-admin-panel",
   "version": "0.0.1",
+  "engines": {
+    "node": "8.10.0"
+  },
   "private": true,
   "scripts": {
     "start": "node app.js"
