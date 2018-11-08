@@ -6,7 +6,7 @@ const router = express.Router();
 
 let ctr = require('../control/middleware.js');
 router.get('/', ctr.isLoggedIn, function (req, res, next) {
-    res.render('index', {title: 'Express'});
+    res.render('profile', {user: req.user});
 });
 
 router.get('/contact', function (req, res, next) {

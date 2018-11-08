@@ -1,11 +1,10 @@
 //id
 //  501593929464-und7gbcciv6259n7cc08ums16j0jd99r.apps.googleusercontent.com
 let User = require('../../models/user.js');
-const googleClientId = '501593929464-und7gbcciv6259n7cc08ums16j0jd99r.apps.googleusercontent.com';
+//secret zhTv4ohFqHkUKxKEz2O2pRph
+const googleClientId = '986346989014-4sjsthpnbabjvaipf3f4tigf6e7sqcce.apps.googleusercontent.com';
 const ObjectID = require('mongodb').ObjectID;
 
-//secret
-//  -nzLn-3j0CR_nsW2m48iDJOP
 async function verify(token, done, client, res, req) {
     const ticket = await client.verifyIdToken({
         idToken: token
@@ -66,6 +65,11 @@ module.exports = {
 
     token: function (req, res, done) {
         const token = req.body.token;
+        if(token === undefined){
+            console.log('no token');
+            return res.status(400).json({error: 'No token specified', msg: req.body});
+        }
+
 
         const {OAuth2Client} = require('google-auth-library');
         const client = new OAuth2Client(googleClientId);

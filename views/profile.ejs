@@ -21,6 +21,7 @@
         }).then(function (data) {
             data.username = " sd"
             console.log(data)
+
             move(convertToPercent(data));
 
             let image = document.getElementById("profileImage");
@@ -35,7 +36,7 @@
             console.log('error');
         });
     }
-    function convertToPercent(profile){
+    function convertToPercent(profile){//если профиль заполнен, то 100
         var percentFill = 100;
         if(profile.image == null)
             percentFill -= 25;
@@ -78,7 +79,7 @@
 
             <span><strong>user id</strong>: <%= user._id ? user._id : '' %></span><br>
             <hr>
-            <span class="fa fa-sign-out"><a href="/"> Sign out</a></span>
+            <span class="fa fa-sign-out"><a href="/logout"> Sign out</a></span>
             <hr>
             <div id="myBar" class="w3-container w3-green" style="height:24px;width:100%"></div>
             <p>Profile fill</p>
