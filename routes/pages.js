@@ -3,10 +3,32 @@ const passport = require('passport');
 
 const router = express.Router();
 
+let Profile = require('../models/profile.js');
 
 let ctr = require('../control/middleware.js');
 router.get('/', ctr.isLoggedIn, function (req, res, next) {
     res.render('profile', {user: req.user});
+});
+
+router.get('/profileEdit', ctr.isLoggedIn, function (req, res, next) {
+
+    let userId = req.user.id;
+
+    const details = {'_id': userId};
+
+    Profile.findOne(details, (err, item) => {
+        if (err) {
+            res.send({'error': 'An error has occurred'});
+        } else {
+            if (item != undefined)//item found
+                res.render('profileEdit', {profile: item});
+            else {
+                res.render('profileEdit', {profile: new Profile()});
+                // res.status(501).end();
+            }
+
+        }
+    });
 });
 
 router.get('/contact', function (req, res, next) {
