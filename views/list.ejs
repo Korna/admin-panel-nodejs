@@ -10,7 +10,7 @@
         return result;
     }
     function loadAllNotes(){
-        var url = getUrl() + '/api/notes/all';
+        var url = getUrl() + '/api/event/list';
 
         fetch(url, {
             credentials: "same-origin"
@@ -77,10 +77,6 @@
 </script>
 <div class="col-sm-8 col-sm-offset-2">
   <div class="jumbotron text-center">
-
-      <% if (message != null) { %>
-    <div class="alert-danger"><%= message %></div>
-      <% } %>
 
     <input type="submit" value="Reload" onclick="loadAllNotes()">
 

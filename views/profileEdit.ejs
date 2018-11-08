@@ -19,7 +19,7 @@
         }).then(function(data) {
             console.log(data);
 
-
+            $('#formImage').val(data.image);
             $('#formUsername').val(data.username);
             $('#formCity').val(data.city);
             $('#formDescription').val(data.description);
@@ -27,37 +27,7 @@
             console.log('error');
         });
     }
-/*
-    $(function () {
 
-        var submityesClicked;
-
-        //catch the click to buttons
-        $('#submityes').click(function () {
-            submityesClicked = true;
-        });
-        $('#submitno').click(function () {
-            submityesClicked = false;
-        });
-
-        $('#submitProfile').submit(function (e) {
-            e.preventDefault();//prevent the default action
-
-            $.ajax({
-                type: "POST",
-                url: "process.php", //process to mail
-                 data: $('form.contact').serialize(),
-                success: function (msg) {
-                    console.log('success');
-                    window.location.replace("/profile");
-                },
-                error: function () {
-                    alert("error");
-                }
-            });
-        });
-    });
-*/
     function makeProfileEditRequest(){//TODO prevent default submit action
             $.ajax({
                 type: "POST",
@@ -81,7 +51,7 @@
     <form action="/api/data/profile" method="post">
       <div class="form-group">
         <label>img</label>
-        <input type="text" class="form-control" name="image"/>
+        <input type="text" class="form-control" name="image" id="formImage"/>
       </div>
 
       <div class="form-group">

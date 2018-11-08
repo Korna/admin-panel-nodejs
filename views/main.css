@@ -6,6 +6,22 @@
     border:1px solid orange;
 }
 
+table{
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+table {
+    border: 1px solid #cdcdcd;
+}
+
+table th, table td{
+    margin-top: 10px;
+    padding: 10px;
+    text-align: left;
+}
+
 .button {
     background-color: #4CAF50; /* Green */
     border: none;

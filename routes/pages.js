@@ -31,6 +31,10 @@ router.get('/profileEdit', ctr.isLoggedIn, function (req, res, next) {
     });
 });
 
+router.post('/eventDetails', function (req, res, next) {
+    res.render('eventDetails.ejs', { event: req.body });
+});
+
 router.get('/contact', function (req, res, next) {
     res.render('contact.ejs', {message: req.flash('loginMessage')});
 });
@@ -48,8 +52,8 @@ router.get('/list', ctr.isLoggedIn
         res.render('list.ejs', {message: req.flash('loginMessage')});
     });
 
-router.get('/notes', ctr.isLoggedIn, ctr.requireAdmin
-    , function (req, res, next) {
+router.get('/notes', ctr.isLoggedIn,
+    function (req, res, next) {
         res.render('notes.ejs', {message: req.flash('loginMessage')});
     });
 

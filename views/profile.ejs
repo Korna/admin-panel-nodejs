@@ -1,4 +1,4 @@
-<% include partials/head %>
+<% include partials/head.ejs %>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <body onload="loadInfo();">
 
@@ -77,7 +77,7 @@
 
 <aside>
 
-
+    <div class="row">
     <div class="col-sm-2 col-sm-offset-2">
         <div class="text-center">
 
@@ -105,11 +105,7 @@
                 <input type="submit" class="form-control" value="Edit"/>
             </div>
         </form>
-        <form action="/list" method="get">
-            <div>
-                <input type="submit" class="form-control" value="Events"/>
-            </div>
-        </form>
+
         <form action="/notes" method="get">
             <div>
                 <input type="submit" class="form-control" value="Create an event"/>
@@ -122,7 +118,12 @@
             </div>
         </form>
 
-        <% include partials/foot %>
+        <% include partials/foot.ejs %>
 
+    </div>
+
+    <div class="col-sm-6">
+        <% include partials/list.ejs %>
+    </div>
     </div>
 </aside>
