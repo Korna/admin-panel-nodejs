@@ -1,0 +1,96 @@
+<body onload="loadAllNotes();">
+<script>
+
+    function getUrl() {
+        var url = window.location.href
+        var arr = url.split("/");
+        var result = arr[0] + "//" + arr[2]
+        return result;
+    }
+
+    function loadAllNotes() {
+        var url = getUrl() + '/api/event/list';
+
+        fetch(url, {
+            credentials: "same-origin"
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            console.log(data);
+
+            clearList();
+
+            data.forEach(function (entry) {
+                add(entry);
+            });
+
+        }).catch(function () {
+            console.log('error');
+        });
+    }
+
+    function clearList() {
+        $("#tableBody").find('img[id="eventImage"]').each(function () {
+            $(this).parents("tr").remove();
+
+        });
+    }
+    function redirectToDetails(id) {
+        console.log(id)
+        window.location.replace(getUrl() + '/eventDetails');
+    }
+
+    function add(entry) {
+        const title = entry.name
+        const idOfEvent = entry._id
+        const image = entry.image
+
+
+        let eventImage = "<td><img id='eventImage' style='max-width:60px;' src='" + image + "'></td>";
+
+        let mapPin;
+        if (entry.latitude == null || entry.latitude === "")
+            mapPin = ""
+        else
+            mapPin = "<td><img id='mapPin' style=\"max-width:15px;\" src=\"https://image.flaticon.com/icons/svg/67/67347.svg\"></td>";
+
+        let buttonDetails = '';//"<td><button id=\"buttonDetails\" onclick=\"redirectToDetails(" + idOfEvent + ");\">Details</button></td>";
+
+        var markup = "<tr>" +
+            eventImage +
+            "<td>" + title + "</td>" +
+            "<td>" + entry.description + "</td>" +
+            mapPin +
+            buttonDetails +
+            "</tr>";
+
+        $("#tableBody").append(markup);
+    }
+
+</script>
+<div>
+    <div class="jumbotron text-center">
+
+
+        <input type="submit" value="Reload" onclick="loadAllNotes();">
+
+        <table align="center">
+            <thead>
+            <tr>
+                <th align="left" width="40%"></th>
+                <th width="40%"></th>
+                <th align="right" width="25%"></th>
+            </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+
+        <ul id="note_list"></ul>
+
+
+    </div>
+
+    <hr>
+</div>
+</body>

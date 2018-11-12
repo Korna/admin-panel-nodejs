@@ -1,0 +1,80 @@
+<% include partials/head.ejs %>
+<body onload="loadInfo()">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+
+    function getUrl(){
+        var url = window.location.href
+        var arr = url.split("/");
+        var result = arr[0] + "//" + arr[2]
+        return result;
+    }
+    function loadInfo(){
+        var url = getUrl() + '/api/data/profile';
+
+        fetch(url, {
+            credentials: "same-origin"
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            console.log(data);
+
+            $('#formImage').val(data.image);
+            $('#formUsername').val(data.username);
+            $('#formCity').val(data.city);
+            $('#formDescription').val(data.description);
+        }).catch(function() {
+            console.log('error');
+        });
+    }
+
+    function makeProfileEditRequest(){//TODO prevent default submit action
+            $.ajax({
+                type: "POST",
+                url: "/api/data/profile",
+                data: $('form.contact').serialize(),
+                success: function (msg) {
+                    window.location.replace("/profile");
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+    }
+
+</script>
+
+<div class="col-sm-8 col-sm-offset-2">
+  <div class="jumbotron text-center">
+    <h2>Edit profile</h2>
+
+    <form action="/api/data/profile" method="post">
+      <div class="form-group">
+        <label>img</label>
+        <input type="text" class="form-control" name="image" id="formImage"/>
+      </div>
+
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" class="form-control" name="username" id="formUsername"/>
+      </div>
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" class="form-control" name="city" id="formCity">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" class="form-control" name="description" id="formDescription">
+      </div>
+      <div>
+        <input type="submit" onclick="makeProfileEditRequest();" class="form-control" value="Submit" id="submitProfile">
+      </div>
+    </form>
+
+
+  </div>
+  <hr>
+    <% include partials/foot.ejs %>
+</div>
+</body>
+</html>

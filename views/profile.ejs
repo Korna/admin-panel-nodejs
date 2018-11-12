@@ -1,38 +1,143 @@
-<% include partials/head %>
+<% include partials/head.ejs %>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body onload="loadInfo();">
 
-  <body>
-    <div class="col-sm-8 col-sm-offset-2">
-      <div class="text-center">
-        <h1 class=" fa fa-user"> Profile</h1><br>
-        <span><strong>user id</strong>: <%= user._id ? user._id : '' %></span><br>
-        <span class="fa fa-sign-out"><a href="/"> Sign out</a></span>
-        <hr>
-        <div class="jumbotron">
-          <% if (user.email != null) { %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+    function getUrl() {
+        var url = window.location.href
+        var arr = url.split("/");
+        var result = arr[0] + "//" + arr[2]
+        return result;
+    }
 
-            <strong>email</strong>: <%= user.email %><br>
-          <% } %>
+    function loadInfo(){
+        var url = getUrl() + '/api/data/profile';
+
+        fetch(url, {
+            credentials: "same-origin"
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            console.log('loadedProfile');
+
+
+            $('#textEmail').html("<strong>Email</strong>:" + data.email);
+            $('#textUsername').html('<strong>' + data.username + '</strong>');
+            $('#textDescription').text(data.description);
+            if(data.city == null || data.city === "")
+                $('#iconPin').css('display', 'none');
+            $('#textCity').text(data.city);
+
+
+            move(convertToPercent(data));
+
+            let image = document.getElementById("profileImage");
+            if (data.image === undefined || data.image == null)
+                image.src = "https://www.weact.org/wp-content/uploads/2016/10/Blank-profile.png"
+            else {
+                image.src = data.image;
+            }
+        }).catch(function() {
+            console.log('error');
+        });
+    }
+
+    function convertToPercent(profile) {//если профиль заполнен, то 100
+        var percentFill = 100;
+        if (profile.image == null || profile.image === "")
+            percentFill -= 25;
+        if (profile.username == null || profile.username === "")
+            percentFill -= 25;
+        if (profile.description == null || profile.description === "")
+            percentFill -= 25;
+        if (profile.city == null || profile.city === "")
+            percentFill -= 25;
+        return percentFill;
+    }
+
+
+    function move(value) {// must be <=100
+        let elem = document.getElementById("myBar");
+        let width = 100;
+        let id = setInterval(frame, 10);
+
+        function frame() {
+            if (width <= value) {
+                clearInterval(id);
+            } else {
+                width--;
+                elem.style.width = width + '%';
+                $('#textPercent').html( 'Profile fill: ' + '<strong>' + width * 1 + '</strong>' + '%');
+            }
+        }
+    }
+
+</script>
+
+<aside>
+
+    <style>
+
+        progress {
+            background-color: #f3f3f3;
+            border: 0;
+            height: 18px;
+            border-radius: 9px;
+        }
+        span {
+            font-size: 16px;
+        }
+
+    </style>
+
+    <div class="row">
+    <div class="col-sm-2 col-sm-offset-2">
+        <div class="text-center">
+
+            <img id="profileImage" style="max-width:75px;"
+                 src="https://www.weact.org/wp-content/uploads/2016/10/Blank-profile.png" alt="Avatar">
+            <hr>
+            <span class="fa fa-sign-out"><a href="/logout"> Sign out</a></span>
+
+            <span id="textEmail"></span><br>
+            <hr>
+
+
+            <span id="textUsername"></span><br>
+            <span id="textDescription"></span><br>
+            <img id="iconPin" style="max-width:15px;"
+                 src="https://image.flaticon.com/icons/svg/67/67347.svg"><span id="textCity"></span><br>
+            <hr>
+            <div id="myBar" class="w3-container w3-green" style="height:24px;width:100%"></div>
+
+            <span id="textPercent">Profile fill: 100%</span>
+
         </div>
-
-        <form action="/list" method="get">
-        <div>
-          <input type="submit" class="form-control" value="Events list" />
-        </div>
+        <form action="/profileEdit" method="get">
+            <div>
+                <input type="submit" class="form-control" value="Edit"/>
+            </div>
         </form>
+
         <form action="/notes" method="get">
-          <div>
-            <input type="submit" class="form-control" value="Create event" />
-          </div>
+            <div>
+                <input type="submit" class="form-control" value="Create an event"/>
+            </div>
         </form>
 
         <form action="/users" method="get">
-          <div>
-            <input type="submit" class="form-control" value="User list" />
-          </div>
+            <div>
+                <input type="submit" class="form-control" value="Moderator panel"/>
+            </div>
         </form>
 
+        <% include partials/foot.ejs %>
 
-      </div>
     </div>
-  </body>
-</html>
+
+    <div class="col-sm-6">
+        <% include partials/list.ejs %>
+    </div>
+    </div>
+</aside>

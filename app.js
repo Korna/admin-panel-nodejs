@@ -7,22 +7,45 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     port = process.env.PORT || 3000,
     passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy,
     MongoClient = require('mongodb').MongoClient,
     mongoose = require('mongoose'),
     flash = require('connect-flash'),
     session = require('express-session'),
-    configDB = require('./config/database.js');
+    configDB = require('./config/database.js'),
+    initSocket = require('./routes/socketChat.js');
+
+
+let server = app.listen(port, () => {
+    console.log('Server is listening at:' + port);
+});
+
+//let io = require('socket.io').listen(process.env.PORT || 3001);
+let io = require('socket.io')(server);
+
 
 //connect to MongoDB
 mongoose.connect(configDB.url);
 const db = mongoose.connection;
-
 //handle mongo error
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    console.log('Connect');
+    console.log('Db Connect');
 });
+
+MongoClient.connect(configDB.url, (err, database) => {
+    if (err)
+        return console.log(err);
+    try{
+        const db = database.db('dbtest');
+    }catch (t){
+        console.log(t);
+    }
+
+    //require('./routes/note_routes')(app, db);
+    // router.use('/note_routes', notes)(app, db);
+    console.log('MongoClient connected');
+});
+
 
 
 
@@ -45,7 +68,7 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(express.static('views'));
 
 //session
 app.use(session({
@@ -67,46 +90,50 @@ require('./config/passport')(passport);
 
 
 let users = require('./routes/users');
-let routes = require('./routes/index');
+let routes = require('./routes/pages.js');
+app.use('/', routes);
+app.use('/users', users);
 
 upload = require('./routes/upload')(app, fs, type, path);
 
 
-let sign = require('./routes/routeSign')(app, db);
-let notes = require('./routes/routeNote')(app, db);
-let profile = require('./routes/routeProfile')(app, db);
-let dialog = require('./routes/routeDialog')(app, db);
-let message = require('./routes/routeMessage')(app, db);
-let options = require('./routes/routeOptions')(app, db);
-let userz = require('./routes/routeUser')(app, db);
+let sign = require('./routes/auth/routeSign')(app, db);
+let notes = require('./routes/event/routeNote')(app, db);
+let profile = require('./routes/data/routeProfile')(app, db);
+let dialog = require('./routes/chat/routeDialog')(app, db);
+let message = require('./routes/chat/routeMessage')(app, db);
+let options = require('./routes/data/routeOptions')(app, db);
+let userz = require('./routes/data/routeUser')(app, db);
 
-app.use('/', routes);
-app.use('/users', users);
+
 //app.use('/', profile);
 //app.use('/note_routes', notes)(app, db);
 
 
-MongoClient.connect(configDB.url, (err, database) => {
-    try{
-        var db = database.db('dbtest');
-    }catch (t){
-        console.log(t);
-    }
-    if (err)
-        return console.log(err);
+// socket io
+/*
+io.configure('production', function(){
+    io.enable('browser client etag');
+    io.set('log level', 1);
 
-    //require('./routes/note_routes')(app, db);
-    // router.use('/note_routes', notes)(app, db);
-    try{
-        app.listen(port, () => {
-            console.log('MongoClient connected. We are live on: ' + port);
-        });
-    }catch (t){
-        console.log(t);
-    }
-
-
+    io.set('transports', [
+        'websocket',
+        'flashsocket',
+        'htmlfile',
+        'xhr-polling',
+        'jsonp-polling',
+    ]);
 });
+
+io.configure('development', function(){
+    io.set('transports', ['websocket']);
+});
+*/
+
+
+initSocket(io);
+
+
 
 app.use(function(req, res, next) {
     const err = new Error('Not Found');

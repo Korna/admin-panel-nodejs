@@ -1,25 +1,24 @@
-
 let ctr = require('../control/middleware.js');
 
 
-module.exports = function(app, fs, type, path) {
-    app.get("/upload/:name", ctr.isLoggedIn, function(req, res) {
+module.exports = function (app, fs, type, path) {
+    app.get("/upload/:name", ctr.isLoggedIn, function (req, res) {
         const name = req.params.name;
         res.sendFile(path.resolve('./upload/' + name));
     });
 
-    app.post('/upload', type, ctr.isLoggedIn, ctr.requireAdmin, function (req,res) {
+    app.post('/upload', type, ctr.isLoggedIn, ctr.requireAdmin, function (req, res) {
         const tmp_path = req.file.path;
         const target_path = 'upload/' + req.file.originalname;
 
         const src = fs.createReadStream(tmp_path);
         const dest = fs.createWriteStream(target_path);
         src.pipe(dest);
-        src.on('end', function() {
+        src.on('end', function () {
             console.log("Upload completed!");
-          //  res.render('complete');
+            //  res.render('complete');
         });
-        src.on('error', function(err) {
+        src.on('error', function (err) {
             console.error(err);
         });
     });

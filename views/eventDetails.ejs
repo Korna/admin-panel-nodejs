@@ -9,71 +9,51 @@
     <div class="alert-danger"><%= message %></div>
       <% } %>
 
-
+    <form>
       <div class="form-group">
         <label>Title</label>
-        <input id="formName" type="text" class="form-control" name="name">
+        <input type="text" class="form-control" name="name">
       </div>
       <div class="form-group">
         <label>Body</label>
-        <input id="formDescription" type="text" class="form-control" name="description" />
+        <input type="text" class="form-control" name="description" />
       </div>
 
-      <div class="form-group">
-        <label>image</label>
-        <input id="formImage" type="text" class="form-control" name="image" />
+      <label>image</label><div class="form-group">
+
+        <input type="text" class="form-control" name="image" />
       </div>
       <div>
-        <button onclick="createEventRequest()">Submit</button>
-
-
+        <button>Create</button>
       </div>
-
+    </form>
 
   </div>
 </div>
 
 <div align="center" id="googleMap" style="width:100%;height:800px;"></div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
 <script>
 
-    let map, infoWindow;
-    var marker = null;
+  function initInterface() {
+      var profile = load();
+  }
 
-    function createEventRequest(){//TODO prevent default submit action
-        var lat;
-        var lng;
-
-        if(marker == undefined || marker == null){
-        }else{
-            lat = marker.getPosition().lat();
-            lng = marker.getPosition().lng();
+    function load() {
+        var the_cookie = document.cookie.split(';');
+        if (the_cookie[0]) {
+            this.data = unescape(the_cookie[0]).parseJSON();
         }
-
-        $.ajax({
-            type: "POST",
-            url: "/api/event/create",
-            data: {
-                name: $('#formName').val(),
-                description: $('#formDescription').val(),
-                image: $('#formImage').val(),
-                latitude: lat,
-                longitude: lng,
-                category: 'Web'
-            },
-            success: function (msg) {
-                window.location.replace("/profile");
-            },
-            error: function () {
-                console.log($('form.contact').serialize());
-            }
-        });
+        return this.data;
     }
 
+
+    let map, infoWindow;
+    var marker;
     function initMap() {
         map = new google.maps.Map(document.getElementById('googleMap'), {
             center: {lat: -34.397, lng: 150.644},
-            zoom: 8
+            zoom: 9
         });
 
         google.maps.event.addListener(map, 'click', function(e) {
@@ -90,6 +70,7 @@
 
         infoWindow = new google.maps.InfoWindow;
 
+        // Try HTML5 geolocation.
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 var pos = {
@@ -117,6 +98,9 @@
             'Error: Your browser doesn\'t support geolocation.');
         infoWindow.open(map);
     }
+
+
+
 
 </script>
 

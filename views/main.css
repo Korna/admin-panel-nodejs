@@ -1,0 +1,43 @@
+.navbar {
+    background-color: #F8F8F8;
+    border-color: #708090;
+}
+.navbar-toggle, .icon-bar {
+    border:1px solid orange;
+}
+
+table{
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+table {
+    border: 1px solid #cdcdcd;
+}
+
+table th, table td{
+    margin-top: 10px;
+    padding: 10px;
+    text-align: left;
+}
+
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+body {
+    padding-top: 0px;
+    background-color: white;
+}
+
+.fa-sign-out {
+    float: right;
+}

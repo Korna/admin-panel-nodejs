@@ -57,13 +57,13 @@
         img.src = image;
         entry.appendChild(img);
 
-        entry.appendChild(document.createTextNode('name:' + title// + ' id:' + id
+        entry.appendChild(document.createTextNode('    ' + title// + ' id:' + id
         ));
         entry.setAttribute('id', id); // added line
         entry.setAttribute('image', image); // added line
 
         var btn = document.createElement("button");
-        var t = document.createTextNode("Delete");
+        var t = document.createTextNode("Удалить");
 
         btn.onclick = function(evt) {
             evt.preventDefault();
@@ -104,7 +104,8 @@
   </div>
 
   <hr>
-  <p>Or go <a href="/">home</a>.</p>
+
 </div>
 </body>
+<% include partials/foot %>
 </html>

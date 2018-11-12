@@ -1,4 +1,4 @@
-<% include partials/head %>
+<% include partials/head.ejs %>
 
 <body onload="loadAllNotes()">
 <script>
@@ -10,7 +10,7 @@
         return result;
     }
     function loadAllNotes(){
-        var url = getUrl() + '/api/notes/all';
+        var url = getUrl() + '/api/event/list';
 
         fetch(url, {
             credentials: "same-origin"
@@ -45,13 +45,13 @@
         img.src = image;
         entry.appendChild(img);
 
-        entry.appendChild(document.createTextNode('name:' + title// + ' id:' + id
+        entry.appendChild(document.createTextNode('    ' + title// + ' id:' + id
         ));
         entry.setAttribute('id', id); // added line
         entry.setAttribute('image', image); // added line
 
         var btn = document.createElement("button");
-        var t = document.createTextNode("Delete");
+        var t = document.createTextNode("Удалить");
 
         btn.onclick = function(evt) {
             evt.preventDefault();
@@ -78,10 +78,6 @@
 <div class="col-sm-8 col-sm-offset-2">
   <div class="jumbotron text-center">
 
-      <% if (message != null) { %>
-    <div class="alert-danger"><%= message %></div>
-      <% } %>
-
     <input type="submit" value="Reload" onclick="loadAllNotes()">
 
     <body>
@@ -92,7 +88,6 @@
   </div>
 
   <hr>
-  <p>Or go <a href="/">home</a>.</p>
+    <% include partials/foot %>
 </div>
 </body>
-</html>
