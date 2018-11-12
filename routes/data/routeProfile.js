@@ -1,8 +1,6 @@
 let ctr = require('../../control/middleware.js');
 
-
 const prefix = '/api/data/';
-//prefix + '
 
 const controller = require('./controller.js');
 

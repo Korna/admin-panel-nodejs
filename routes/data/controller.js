@@ -54,9 +54,6 @@ module.exports.optionsUpsert = function (req, res) {
 
 module.exports.profileGet = function (req, res) {
     let userId = req.user.id;
-    // const req = req.params.email; // :email
-
-
     const details = {'_id': userId};
 
     Profile.findOne(details, (err, item) => {
